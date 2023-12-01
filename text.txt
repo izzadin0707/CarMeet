@@ -1,0 +1,51 @@
+Users::create([
+    'name' => 'namy',
+    'username' => 'namy#0001',
+    'email' => 'namynakamy123@gmail.com',
+    'password' => bcrypt('123'),
+    'status' => 'user',
+    'category_id' => '2',
+    'color' => '',
+    'photo_profile' => '',
+])
+
+Categories::create([
+    'name' => 'Art',
+    'slug' => 'art'
+])
+
+Categories::create([
+    'name' => 'Animation',
+    'slug' => 'animation'
+])
+
+Categories::create([
+    'name' => 'Music',
+    'slug' => 'music'
+])
+
+Categories::create([
+    'name' => '3D Model',
+    'slug' => '3d_model'
+])
+
+Creations::create([
+    'user_id' => '1',
+    'category_id' => '1',
+    'title' => 'Ini Asyik',
+    'desc' => 'Best Loli',
+    'creation' => base64_encode(file_get_contents('D:\My Art\AWAS LU BUKA!!!!\My Waifu!! Dont Look!!\Crying Loli.PNG')),
+    'likes' => '0',
+    'comments' => '0'
+])
+
+
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=izzadin0707@gmail.com
+MAIL_PASSWORD=osxafjrnwwuagovz
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=izzadin0707@gmail.com
+MAIL_FROM_NAME="${APP_NAME}"
