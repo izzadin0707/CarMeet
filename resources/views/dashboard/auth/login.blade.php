@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="style/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <title>LookME | Dashboard</title>
+    <title>CarMeet | Dashboard</title>
 </head>
 <body class="container d-flex justify-content-center align-items-center vh-100">
     <div class="border rounded">
@@ -19,7 +19,7 @@
             </div>
         @endif
         <div class="card p-3" style="width: 59vh;">
-            <h2 class="text-center my-3">LookME | Dashboard</h2>
+            <h2 class="text-center my-3">Carmeet | Dashboard</h2>
             <div class="card-body">
                 {{-- Login --}}
                 <div id="loginForm" style="display: block;">
@@ -27,7 +27,7 @@
                         @csrf
                         <div class="form-floating mb-4 col">
                             <input type="text" class="form-control" id="floatingInput" name="email" placeholder="name@example.com" required autofocus>
-                            <label for="floatingInput">Email or Username</label>
+                            <label for="floatingInput">Email</label>
                         </div>
                         <div class="form-floating mb-4 col">
                             <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="password" required>

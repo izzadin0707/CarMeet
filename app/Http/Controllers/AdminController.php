@@ -6,6 +6,7 @@ use App\Models\Assets;
 use App\Models\Banned;
 use App\Models\Comments;
 use App\Models\Creations;
+use App\Models\Event;
 use App\Models\Report;
 use App\Models\Users;
 use Illuminate\Http\Request;
@@ -107,6 +108,16 @@ class AdminController extends Controller
         ]);
     }
 
+    public function allEvent()
+    {
+        return view('dashboard.event', [
+            'url' => 'event',
+            'auth_assets' => Assets::where('user_id', Auth::guard('admin')->id())->get(),
+            'event' => Event::with(['user'])->latest()->get(),
+            'reports' => Report::all()
+        ]);
+    }
+
     public function changeRole(Request $request)
     {
         $request->validate([
@@ -144,6 +155,13 @@ class AdminController extends Controller
     {
         return view('dashboard.layouts.reports-search', [
             'reports' => Report::with(['user'])->where('desc', 'LIKE', '%' . $request->input('key') . '%')->get()
+        ]);
+    }
+
+    public function eventSearch(Request $request)
+    {
+        return view('dashboard.layouts.event-search', [
+            'event' => Event::where('title', 'LIKE', '%' . $request->input('key') . '%')->orWhere('desc', 'LIKE', '%' . $request->input('key') . '%')->get()
         ]);
     }
 }

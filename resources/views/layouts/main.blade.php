@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 @if(isset($color) || isset($font))
-<html lang="en" id="htmlMode" data-bs-theme="dark" data-bg-color="{{ $color }}" data-font-color="{{ $font }}">
+<html lang="en" id="htmlMode" data-bs-theme="light" data-bg-color="{{ $color }}" data-font-color="{{ $font }}">
 @else
-<html lang="en" id="htmlMode" data-bs-theme="dark">
+<html lang="en" id="htmlMode" data-bs-theme="light">
 @endisset
 
 <head>
@@ -15,7 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('style/js/script.js') }}"></script>
-    <title>LookME</title>
+    <title>CarMeet</title>
 </head>
 {{-- loading --}}
 <div class="loading container-fluid d-flex justify-content-center align-items-center">
@@ -60,7 +60,7 @@
             {{-- side-bar --}}
             <nav class="col-md-3 col-lg-2 sidebar" id="mySidebar">
                 <button class="btn mx-3" id="closeSidebar" style="float: right; border: none;"><i class="bi bi-x fs-4"></i></button>
-                <h1 class="mx-3" id="home">LookME</h1>
+                <h1 class="mx-3" style="cursor: pointer;" id="home">CarMeet</h1>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="/upload"><i class="bi bi-plus-lg fs-5" style="margin-right: 7px;"></i> Post</a>
@@ -72,16 +72,16 @@
                         <div class="category-list ms-4">
                             <ul class="nav flex-column">
                                 <li class="nav-item">
-                                    <a class="nav-link fs-6" href="/category/art"><i class="bi bi-pencil fs-5" style="margin-right: 7px;"></i> Art</a>
+                                    <a class="nav-link fs-6" href="/category/art"><i class="bi bi-pencil fs-5" style="margin-right: 7px;"></i> Mercy</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link fs-6" href="/category/animation"><i class="bi bi-film fs-5" style="margin-right: 7px;"></i> Animation</a>
+                                    <a class="nav-link fs-6" href="/category/animation"><i class="bi bi-film fs-5" style="margin-right: 7px;"></i> BMW</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link fs-6" href="/category/design"><i class="bi bi-vector-pen fs-5" style="margin-right: 7px;"></i> Design</a>
+                                    <a class="nav-link fs-6" href="/category/design"><i class="bi bi-vector-pen fs-5" style="margin-right: 7px;"></i> Honda</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link fs-6" href="/category/music"><i class="bi bi-headphones fs-5" style="margin-right: 7px;"></i> Music</a>
+                                    <a class="nav-link fs-6" href="/category/music"><i class="bi bi-headphones fs-5" style="margin-right: 7px;"></i> Toyota</a>
                                 </li>
                             </ul>
                         </div>

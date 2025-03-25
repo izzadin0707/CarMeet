@@ -10,6 +10,7 @@ use App\Models\Creations;
 use App\Models\Likes;
 use App\Models\Saves;
 use App\Models\Users;
+use App\Models\Event;
 use Egulias\EmailValidator\Parser\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,8 @@ class CreationsController extends Controller
                 "creations" => Creations::with(['users', 'categorys'])->latest()->get()->take(6),
                 "assets" => Assets::all(),
                 "auth_assets" => Assets::where('user_id', Auth::id())->get(),
-                "user" => Auth::user()
+                "user" => Auth::user(),
+                "events" => Event::all()
             ]);
         }
     }

@@ -129,12 +129,14 @@ $(document).ready(function () {
             $("#loginForm").css("display", "none");
             $("#registerForm").css("display", "block");
             $('#btnRegister').text("Login");
+            $('#auth-text').text("Sudah punya akun?");
             $('#message').html('');
             $login = false;
         }else{
             $("#loginForm").css("display", "block");
             $("#registerForm").css("display", "none");
             $('#btnRegister').text("Register");
+            $('#auth-text').text("Belum punya akun?");
             $('#message').html('');
             $login = true;
         }

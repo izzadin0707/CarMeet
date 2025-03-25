@@ -58,12 +58,12 @@ class UploadController extends Controller
 
                 if (Str::startsWith($mimeType, 'image')) {
                     $creationEdit = Creations::createCreation($title, $desc, $creation, 'png', $category, $userId);
-                    $file->storeAs('creations', $creationEdit.'.png','public');
+                    $file->move(public_path('storage/creations'), $creationEdit.'.png');
                     return redirect('/profile');
                 }
                 elseif (Str::startsWith($mimeType, 'video')) {
                     $creationEdit = Creations::createCreation($title, $desc, $creation, 'mp4', $category, $userId);
-                    $file->storeAs('creations', $creationEdit.'.mp4','public');
+                    $file->move(public_path('storage/creations'), $creationEdit.'.mp4');
                     return redirect('/profile');
                 }
                 else {

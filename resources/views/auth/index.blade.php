@@ -10,7 +10,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script src="style/js/script.js"></script>
-    <title>LookME</title>
+    <title>CarMeet</title>
 </head>
 <body class="position-relative">
     <div class="position-absolute top-50 start-50 translate-middle">
@@ -22,7 +22,7 @@
         </div>
         @endif
         <div class="card p-3" style="width: 59vh;">
-            <h1 class="text-center my-3">LookME</h1>
+            <h1 class="text-center my-3">CarMeet</h1>
             <div class="card-body">
                 {{-- Login --}}
                 <div id="loginForm" style="display: block;">
@@ -41,7 +41,7 @@
                             <label class="form-check-label" for="flexCheckDefault">Remember Me</label>
                         </div>
                         <div class="form-floating text-center">
-                            <button class="btn btn-outline-secondary fs-5" type="submit" style="border: 1px solid var(--bs-border-color); width: 20vh;">Login</button>
+                            <button class="btn btn-primary fs-5" type="submit" style="border: 1px solid var(--bs-border-color); width: 20vh; width: 100%">Login</button>
                         </div>
                     </form>
                 </div>
@@ -68,15 +68,16 @@
                             <label for="floatingPassword">Confirm Password</label>
                         </div>
                         <div class="form-floating text-center">
-                            <button class="btn btn-outline-secondary fs-5" type="submit" style="border: 1px solid var(--bs-border-color); width: 20vh;">Register</button>
+                            <button class="btn btn-primary fs-5" type="submit" style="border: 1px solid var(--bs-border-color); width: 100%;">Register</button>
                         </div>
                     </form>
                 </div> 
+                <div class="d-flex" style="margin-top: 20px; align-items: center; justify-content: center">
+                    <div id="auth-text">Belum punya akun?</div>
+                    <button class="" id="btnRegister" style="background-color: transparent; border: 0; color: blueviolet">Register</button>
+                </div>
                                 
             </div>
-        </div>
-        <div class="text-end">
-            <button class="btn" id="btnRegister" style="border: 1px solid var(--bs-light-border-subtle); border-top: 0px solid; border-radius: 0px 0px 7px 7px;">Register</button>
         </div>
     </div>
     </div>

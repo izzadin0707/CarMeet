@@ -64,7 +64,7 @@ class ProfileController extends Controller
 
             if (Str::startsWith($mimeType, 'image')) {
                 $photoProfileEdit = Users::photoProfile($photoProfile);
-                $file->storeAs('assets', $photoProfileEdit.'.png','public');
+                $file->move(public_path('storage/assets'), $photoProfileEdit.'.png');
                 return $photoProfileEdit;
             }
             return false;
@@ -81,7 +81,7 @@ class ProfileController extends Controller
 
             if (Str::startsWith($mimeType, 'image')) {
                 $bannerEdit = Users::banner($banner);
-                $file->storeAs('assets', $bannerEdit.'.png','public');
+                $file->move(public_path('storage/assets'), $bannerEdit.'.png');
                 return $bannerEdit;
             }
             return false;

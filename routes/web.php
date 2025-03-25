@@ -6,9 +6,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CreationsController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VerificationController;
 use App\Models\Creations;
+use App\Models\Event;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,24 +33,32 @@ Route::get('/dashboard/report', [AdminController::class, 'allReport'])->middlewa
 Route::get('/dashboard/users', [AdminController::class, 'allUser'])->middleware('auth.admin')->name('dashboard-users');
 Route::get('/dashboard/creations', [AdminController::class, 'allCreation'])->middleware('auth.admin')->name('dashboard-creations');
 Route::get('/dashboard/comments', [AdminController::class, 'allComment'])->middleware('auth.admin')->name('dashboard-comments');
+Route::get('/dashboard/events', [AdminController::class, 'allEvent'])->middleware('auth.admin')->name('dashboard-events');
 
 Route::post('/dashboard/change-role', [AdminController::class, 'changeRole'])->middleware('auth.admin')->name('change-role');
 
 Route::post('/dashboard/users-search', [AdminController::class, 'usersSearch'])->middleware('auth.admin')->name('dashboard-users-search');
 Route::post('/dashboard/creations-search', [AdminController::class, 'creationsSearch'])->middleware('auth.admin')->name('dashboard-creations-search');
-Route::post('/dashboard/comments-search', [AdminController::class, 'commentsSearch'])->middleware('auth.admin')->name('dashboard-comments-search');
+Route::post('/dashboard/event-search', [AdminController::class, 'commentsSearch'])->middleware('auth.admin')->name('dashboard-comments-search');
 Route::post('/dashboard/reports-search', [AdminController::class, 'reportsSearch'])->middleware('auth.admin')->name('dashboard-reports-search');
+Route::post('/dashboard/event-search', [AdminController::class, 'eventSearch'])->middleware('auth.admin')->name('dashboard-event-search');
 
 Route::get('/dashboard/report/read/{id}', [ReportController::class, 'reportRead'])->middleware('auth.admin')->name('dashboard-report-read');
 Route::get('/dashboard/report/drop/{id}', [ReportController::class, 'reportDrop'])->middleware('auth.admin')->name('dashboard-report-drop');
 Route::get('/dashboard/users/{id}', [ReportController::class, 'usersView'])->middleware('auth.admin')->name('dashboard-users-view');
 Route::get('/dashboard/creations/{id}', [ReportController::class, 'creationsView'])->middleware('auth.admin')->name('dashboard-creations-view');
 Route::get('/dashboard/comments/{id}', [ReportController::class, 'commentsView'])->middleware('auth.admin')->name('dashboard-comments-view');
+Route::get('/dashboard/event/{id}', [EventController::class, 'eventView'])->middleware('auth.admin')->name('dashboard-event-edit');
+Route::get('/dashboard/event', [EventController::class, 'eventView'])->middleware('auth.admin')->name('dashboard-event-view');
 
 Route::get('/dashboard/users/banned/{id}', [ReportController::class, 'bannedUser'])->middleware('auth.admin')->name('dashboard-users-banned');
 Route::get('/dashboard/users/unbanned/{id}', [ReportController::class, 'unbannedUser'])->middleware('auth.admin')->name('dashboard-users-unbanned');
 Route::get('/dashboard/creations/deleted/{id}', [ReportController::class, 'deletedCreation'])->middleware('auth.admin')->name('dashboard-creations-deleted');
 Route::get('/dashboard/comments/deleted/{id}', [ReportController::class, 'deletedComment'])->middleware('auth.admin')->name('dashboard-comments-deleted');
+
+Route::post('/dashboard/event/upload', [EventController::class, 'upload'])->middleware('auth.admin')->name('dashboard-event-upload');
+Route::post('/dashboard/event/update', [EventController::class, 'update'])->middleware('auth.admin')->name('dashboard-event-update');
+Route::get('/dashboard/event/delete/{id}', [EventController::class, 'delete'])->middleware('auth.admin')->name('dashboard-event-delete');
 
 //Users
 

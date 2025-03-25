@@ -24,10 +24,10 @@ class AuthController extends Controller
         
         $field = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         
-        if($field == 'username'){
-            $credentials[$field] = $credentials['message'];
-            unset($credentials['message']);
-        }
+        // if($field == 'username'){
+        //     $credentials[$field] = $credentials['message'];
+        //     unset($credentials['message']);
+        // }
 
         $remember = $request->has('remember');
 
