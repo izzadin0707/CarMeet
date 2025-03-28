@@ -43,36 +43,38 @@ class UploadController extends Controller
 
     public static function upload(Request $request) {
         $file = $request->file('file');
-        $title = $request->input('title');
+        $title = $request->has('title') ? $request->input('title') : "";
         $desc = $request->has('desc') ? $request->input('desc') : "";
-        $category = $request->input('category');
+        $category = $request->has('category') ? $request->input('category') : null;
 
-    if ($file && $title && $category) {
-        $mimeType = $file->getMimeType();
-        $categories = Categories::all();
-        foreach ($categories as $c){
-            if($c->id == $category){
+        if ($file || $desc) {
+            $mimeType = $file->getMimeType();
+            // $categories = Categories::all();
+            // foreach ($categories as $c){
+            //     if($c->id == $category){
 
-                $userId = Auth::id();
-                $creation = date('Ymd') . '0' . $userId . '0' . $category;
+                    
+            //     }
+            // }
+            $userId = Auth::id();
+            $creation = date('Ymd') . '0' . $userId . '0' . $category;
 
-                if (Str::startsWith($mimeType, 'image')) {
-                    $creationEdit = Creations::createCreation($title, $desc, $creation, 'png', $category, $userId);
-                    $file->move(public_path('storage/creations'), $creationEdit.'.png');
-                    return redirect('/profile');
-                }
-                elseif (Str::startsWith($mimeType, 'video')) {
-                    $creationEdit = Creations::createCreation($title, $desc, $creation, 'mp4', $category, $userId);
-                    $file->move(public_path('storage/creations'), $creationEdit.'.mp4');
-                    return redirect('/profile');
-                }
-                else {
-                    return redirect()->back()->with('status', 'Failed to upload the file.');
-                }
-
+            if (Str::startsWith($mimeType, 'image')) {
+                $creationEdit = Creations::createCreation($title, $desc, $creation, 'png', $category, $userId);
+                $file->move(public_path('storage/creations'), $creationEdit.'.png');
+                return redirect()->back();
+                // return redirect('/profile');
+            }
+            elseif (Str::startsWith($mimeType, 'video')) {
+                $creationEdit = Creations::createCreation($title, $desc, $creation, 'mp4', $category, $userId);
+                $file->move(public_path('storage/creations'), $creationEdit.'.mp4');
+                return redirect()->back();
+                // return redirect('/profile');
+            }
+            else {
+                return redirect()->back()->with('status', 'Failed to upload the file.');
             }
         }
-    }
         return redirect()->back()->with('status', 'No file uploaded.');
     }
 

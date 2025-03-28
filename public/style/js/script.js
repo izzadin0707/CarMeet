@@ -344,14 +344,14 @@ $(document).ready(function(){
                 creation_user_id: creation_user_id,
                 _token: csrfToken
             },
-            success: function(data) {                
-                if (data == true) {
-                    clickedElement.find("i").attr('class', 'bi bi-heart fs-5');
-                } else {
-                    clickedElement.find("i").attr('class', 'bi bi-heart-fill fs-5');
+            success: function(res) {                
+                clickedElement.find("span").text(res.like_counts)
+                if (res.result == true) {
+                    if (clickedElement.find("i").hasClass('bi-heart-fill')) {
+                        clickedElement.find("i").removeClass('bi-heart-fill'); 
+                        clickedElement.find("i").addClass('bi-heart'); 
+                    }
                 }
-                $(".loading").toggleClass("show");
-                $(".loading i").toggleClass("show");
             }
         });
     }
@@ -364,8 +364,13 @@ $(document).ready(function(){
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
         var clickedElement = $(this);
 
-        $(".loading").toggleClass("show");
-        $(".loading i").toggleClass("show");
+        if (clickedElement.find("i").hasClass('bi-heart')) {
+            clickedElement.find("i").removeClass('bi-heart'); 
+            clickedElement.find("i").addClass('bi-heart-fill'); 
+        } else {
+            clickedElement.find("i").removeClass('bi-heart-fill'); 
+            clickedElement.find("i").addClass('bi-heart'); 
+        }
     
         $.ajax({
             type: 'POST',
@@ -376,11 +381,13 @@ $(document).ready(function(){
                 creation_user_id: creation_user_id,
                 _token: csrfToken
             },
-            success: function(data) {                
-                if (data == true) {
-                    clickedElement.find("i").attr('class', 'bi bi-heart-fill fs-5');
-                    $(".loading").toggleClass("show");
-                    $(".loading i").toggleClass("show");
+            success: function(res) {          
+                clickedElement.find("span").text(res.like_counts)      
+                if (res.result == true) {
+                    if (clickedElement.find("i").hasClass('bi-heart')) {
+                        clickedElement.find("i").removeClass('bi-heart'); 
+                        clickedElement.find("i").addClass('bi-heart-fill'); 
+                    }
                 } else {
                     dislike(user_id, creation_id, creation_user_id, clickedElement);
                 }
@@ -404,14 +411,13 @@ $(document).ready(function(){
                 creation_id: creation_id,
                 _token: csrfToken
             },
-            success: function(data) {                
-                if (data == true) {
-                    clickedElement.find("i").attr('class', 'bi bi-bookmark me-2');
-                } else {
-                    clickedElement.find("i").attr('class', 'bi bi-bookmark-fill me-2');
+            success: function(res) {                
+                if (res.result == true) {
+                    if (clickedElement.find("i").hasClass('bi-bookmark-fill')) {
+                        clickedElement.find("i").removeClass('bi-bookmark-fill'); 
+                        clickedElement.find("i").addClass('bi-bookmark'); 
+                    }
                 }
-                $(".loading").toggleClass("show");
-                $(".loading i").toggleClass("show");
             }
         });
     }
@@ -423,10 +429,13 @@ $(document).ready(function(){
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
         var clickedElement = $(this);
 
-        $(".loading").toggleClass("show");
-        $(".loading i").toggleClass("show");
-        
-    
+        if (clickedElement.find("i").hasClass('bi-bookmark')) {
+            clickedElement.find("i").removeClass('bi-bookmark'); 
+            clickedElement.find("i").addClass('bi-bookmark-fill'); 
+        } else {
+            clickedElement.find("i").removeClass('bi-bookmark-fill'); 
+            clickedElement.find("i").addClass('bi-bookmark'); 
+        }
     
         $.ajax({
             type: 'POST',
@@ -436,11 +445,12 @@ $(document).ready(function(){
                 creation_id: creation_id,
                 _token: csrfToken
             },
-            success: function(data) {                
-                if (data == true) {
-                    clickedElement.find("i").attr('class', 'bi bi-bookmark-fill me-2');
-                    $(".loading").toggleClass("show");
-                    $(".loading i").toggleClass("show");
+            success: function(res) {                
+                if (res.result == true) {
+                    if (clickedElement.find("i").hasClass('bi-bookmark')) {
+                        clickedElement.find("i").removeClass('bi-bookmark'); 
+                        clickedElement.find("i").addClass('bi-bookmark-fill'); 
+                    }
                 } else {
                     unsave(user_id, creation_id, clickedElement);
                 }

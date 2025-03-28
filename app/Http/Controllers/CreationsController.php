@@ -31,11 +31,13 @@ class CreationsController extends Controller
             return view('home', [
                 "color" => Auth::user()->color,
                 "font" => Auth::user()->font,
-                "creations" => Creations::with(['users', 'categorys'])->latest()->get()->take(6),
-                "assets" => Assets::all(),
                 "auth_assets" => Assets::where('user_id', Auth::id())->get(),
+                "assets" => Assets::all(),
                 "user" => Auth::user(),
-                "events" => Event::all()
+                "events" => Event::all(),
+                "creations" => Creations::with(['users', 'categorys'])->latest()->get()->take(6),
+                "likes" => Likes::all(),
+                "saves" => Saves::all(),
             ]);
         }
     }
@@ -173,6 +175,9 @@ class CreationsController extends Controller
         $user_id = $request->input('user_id');
         $creation_id = $request->input('creation_id');
         $creation_user_id = $request->input('creation_user_id');
+        $res = [
+            'result' => false
+        ];
 
         $existingLike = Likes::where('user_id', $user_id)
                          ->where('creation_id', $creation_id)
@@ -186,17 +191,21 @@ class CreationsController extends Controller
             ]);
 
             if ($like->save()) {
-                return true;
-            } else {
-                return false;
+                $res['result'] = true;
             }
         }
+
+        $res['like_counts'] = Likes::where('creation_id', $creation_id)->count();
+        return response()->json($res);
     }
 
     public function dislike(Request $request) {
         $user_id = $request->input('user_id');
         $creation_id = $request->input('creation_id');
         $creation_user_id = $request->input('creation_user_id');
+        $res = [
+            'result' => false
+        ];
 
         $existingLike = Likes::where('user_id', $user_id)
                          ->where('creation_id', $creation_id)
@@ -204,16 +213,20 @@ class CreationsController extends Controller
                          ->first();
         if ($existingLike) {
             if ($existingLike->delete()) {
-                return true;
-            } else {
-                return false;
+                $res['result'] = true;
             }
         }
+
+        $res['like_counts'] = Likes::where('creation_id', $creation_id)->count();
+        return response()->json($res);
     }
 
     public function save(Request $request) {
         $user_id = $request->input('user_id');
         $creation_id = $request->input('creation_id');
+        $res = [
+            'result' => false
+        ];
 
         $existingSave= Saves::where('user_id', $user_id)
                          ->where('creation_id', $creation_id)
@@ -225,29 +238,28 @@ class CreationsController extends Controller
             ]);
 
             if ($save->save()) {
-                return true;
-            } else {
-                return false;
+                $res['result'] = true;
             }
         }
-        return false;
+        return response()->json($res);
     }
 
     public function unsave(Request $request) {
         $user_id = $request->input('user_id');
         $creation_id = $request->input('creation_id');
+        $res = [
+            'result' => false
+        ];
 
         $existingSave = Saves::where('user_id', $user_id)
                          ->where('creation_id', $creation_id)
                          ->first();
         if ($existingSave) {
             if ($existingSave->delete()) {
-                return true;
-            } else {
-                return false;
+                $res['result'] = true;
             }
         }
-        return false;
+        return response()->json($res);
     }
 
     public function comment(Request $request) {

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('creations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('category_id')->nullable()->constrained('categories');
             $table->string('title');
             $table->text('desc')->nullable();
             $table->bigInteger('creation');
