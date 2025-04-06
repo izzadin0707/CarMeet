@@ -37,7 +37,7 @@
     <a href="#" class="list-group-item list-group-item-action">
         <i class="bi bi-chat me-2"></i> Pesan
     </a>
-    <a href="#" class="list-group-item list-group-item-action">
+    <a href="#" class="list-group-item list-group-item-action" onclick="openModal()">
         <i class="bi bi-plus-square me-2"></i> Buat Postingan
     </a>
 </div>

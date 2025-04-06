@@ -1,5 +1,5 @@
 <div class="mb-3">
-    <form action="{{ route("search") }}" method="post" class="input-group align-self-center" role="search">
+    <form action="{{ route("home") }}" method="get" class="input-group align-self-center" role="search">
         @csrf
         <span class="input-group-text rounded-start"><i class="bi bi-search"></i></span>
         <input class="form-control rounded-end" type="search" name="search" id="search" placeholder="Search" aria-label="Search">

@@ -413,9 +413,9 @@ $(document).ready(function(){
             },
             success: function(res) {                
                 if (res.result == true) {
-                    if (clickedElement.find("i").hasClass('bi-bookmark-fill')) {
-                        clickedElement.find("i").removeClass('bi-bookmark-fill'); 
-                        clickedElement.find("i").addClass('bi-bookmark'); 
+                    if (clickedElement.closest(".card").find("i").hasClass('bi-bookmark-fill')) {
+                        clickedElement.closest(".card").find("i").removeClass('bi-bookmark-fill'); 
+                        clickedElement.closest(".card").find("i").addClass('bi-bookmark'); 
                     }
                 }
             }
@@ -429,12 +429,12 @@ $(document).ready(function(){
         var csrfToken = $('meta[name="csrf-token"]').attr('content');
         var clickedElement = $(this);
 
-        if (clickedElement.find("i").hasClass('bi-bookmark')) {
-            clickedElement.find("i").removeClass('bi-bookmark'); 
-            clickedElement.find("i").addClass('bi-bookmark-fill'); 
+        if (clickedElement.closest(".card").find("i").hasClass('bi-bookmark')) {
+            clickedElement.closest(".card").find("i").removeClass('bi-bookmark'); 
+            clickedElement.closest(".card").find("i").addClass('bi-bookmark-fill'); 
         } else {
-            clickedElement.find("i").removeClass('bi-bookmark-fill'); 
-            clickedElement.find("i").addClass('bi-bookmark'); 
+            clickedElement.closest(".card").find("i").removeClass('bi-bookmark-fill'); 
+            clickedElement.closest(".card").find("i").addClass('bi-bookmark'); 
         }
     
         $.ajax({
@@ -447,9 +447,9 @@ $(document).ready(function(){
             },
             success: function(res) {                
                 if (res.result == true) {
-                    if (clickedElement.find("i").hasClass('bi-bookmark')) {
-                        clickedElement.find("i").removeClass('bi-bookmark'); 
-                        clickedElement.find("i").addClass('bi-bookmark-fill'); 
+                    if (clickedElement.closest(".card").find("i").hasClass('bi-bookmark')) {
+                        clickedElement.closest(".card").find("i").removeClass('bi-bookmark'); 
+                        clickedElement.closest(".card").find("i").addClass('bi-bookmark-fill'); 
                     }
                 } else {
                     unsave(user_id, creation_id, clickedElement);
@@ -458,3 +458,23 @@ $(document).ready(function(){
         });
     });
 });
+
+// Modal
+// Modal Open
+function openModal() {
+    $("#modal").removeClass("d-none").animate({
+        opacity: 1
+    }, 100);
+}
+
+$(document).ready(function () {
+    // Modal Close
+    $(".modal-close").click(function (e) {
+        $(e.target).closest("#modal").animate({
+            opacity: 0
+        }, 100, function () {
+            $(this).addClass("d-none");
+        }
+        );
+    });
+})

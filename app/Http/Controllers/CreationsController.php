@@ -26,8 +26,9 @@ class CreationsController extends Controller
         }
     }
 
-    public function index() {
+    public function index(Request $request) {
         if($this->validateBan()){
+            $search = $request->query('search');
             return view('home', [
                 "color" => Auth::user()->color,
                 "font" => Auth::user()->font,
@@ -35,9 +36,10 @@ class CreationsController extends Controller
                 "assets" => Assets::all(),
                 "user" => Auth::user(),
                 "events" => Event::all(),
-                "creations" => Creations::with(['users', 'categorys'])->latest()->get()->take(6),
+                "creations" => Creations::with(['users', 'categorys'])->where('title', 'LIKE', '%'.$request->input('search').'%')->orWhere('desc', 'LIKE', '%'.$request->input('search').'%')->latest()->get(),
                 "likes" => Likes::all(),
                 "saves" => Saves::all(),
+                "search" => $search,
             ]);
         }
     }
