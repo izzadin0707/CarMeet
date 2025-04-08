@@ -2,7 +2,7 @@
 
 @section('content')
 {{-- Posting Cepat --}}
-<div class="card mb-3">
+<div class="card mb-3 shadow-sm border-0">
   <div class="card-body">
     @if (request()->has('search'))
     <div class="d-flex align-items-center gap-4">
@@ -27,7 +27,7 @@
               style="width: 40px; height: 40px; object-fit: cover;">
           <textarea name="desc" class="form-control" placeholder="Apa yang ingin Anda bagikan?" rows="2"></textarea>
       </div>
-      <div class="d-flex justify-content-between align-items-center" style="margin-left: 3.5rem;">
+        <div class="d-flex justify-content-between align-items-center" style="margin-left: 3.5rem;">
             <div>
                 <!-- Single file input for both image and video -->
                 <input type="file" name="file" id="mediaFileInput" accept="image/*,video/*" style="display:none;" />
@@ -38,19 +38,18 @@
                 </button>
             </div>
             <button type="submit" class="btn btn-primary">Posting</button>
-      </div>
+        </div>
 
         <!-- Preview Container -->
-        <div id="previewContainer" class="mt-3" style="display:none;">
-            <div class="d-flex align-items-center">
-                <button type="button" id="removePreview" class="btn btn-sm btn-outline-danger me-2">
-                    <i class="bi bi-x"></i>
-                </button>
-                <span id="fileNameDisplay" class="me-2"></span>
-            </div>
-            <div id="mediaPreview" class="mt-2">
-                <img id="imagePreview" style="max-width: 100%; max-height: 300px; display:none;" />
-                <video id="videoPreview" controls style="max-width: 100%; max-height: 300px; display:none;"></video>
+        <div id="previewContainer" class="mt-3" style="display:none; margin-left: 3.5rem;">
+            <div id="mediaPreview" class="mt-2 d-flex">
+                <div class="position-relative">
+                    <button type="button" id="removePreview" class="btn btn-sm btn-light rounded-3 opacity-75 position-absolute end-0 m-1">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <img id="imagePreview" class="rounded-3" style="max-width: 100%; max-height: 300px; display:none;" />
+                    <video id="videoPreview" class="rounded-3" controls style="max-width: 100%; max-height: 300px; display:none;"></video>
+                </div>
             </div>
         </div>
     </form>
@@ -60,11 +59,11 @@
 
 {{-- Feed Postingan --}}
 @if (count($creations) <= 0)
-  <p class="fs-4 text-center">no content available</p>
+    <p class="text-muted text-center">no content available</p>
 @endif
 @foreach ($creations as $creation)
 
-<div class="card mb-3">
+<div class="card mb-3 shadow-sm border-0">
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
@@ -80,31 +79,48 @@
                             <span class="mb-0 fw-semibold">{{ $creation->users->name }}</span>
                             <small class="text-muted"> • {{ $creation->created_at->diffForHumans() }}</small>
                         </div>
-                        <p class="card-text">{{ $creation->desc }}</p>
+                        @php
+                            $token = csrf_token();
+                            $desc = preg_replace_callback('/#(\w+)/', function ($match) use ($token) {
+                                $tag = $match[1];
+                                return '<a href="/?search=' . urlencode('#' . $tag) . '&_token=' . $token . '" class="text-primary">#' . $tag . '</a>';
+                            }, e($creation->desc));
+                        @endphp
+                        <p class="card-text">{!! $desc !!}</p>
                     </div>
                     <div class="dropdown">
                         <button class="btn btn-link text-muted px-0" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-three-dots-vertical"></i>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Bagikan</a></li>
+                            @if ($creation->user_id == $user->id)
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="openModalDelete({{ $creation->id }})">
+                                        Delete
+                                    </a>
+                                </li>
+                            @endif
                             <li>
                                 <a 
                                 class="dropdown-item btn-save" 
                                 href="#" 
                                 data-user-id="{{ $user->id }}" 
                                 data-creation-id="{{ $creation->id }}">
-                                    Simpan
+                                    Save
                                 </a>
                             </li>
-                            <li><a class="dropdown-item" href="#">Laporkan</a></li>
+                            @if ($creation->user_id != $user->id)
+                                <li><a class="dropdown-item" href="#">Report</a></li>
+                            @endif
                         </ul>
                     </div>
                 </div>
-                <div>
+                @isset($creation->creation)
+                <div class="mb-3">
                     <img src="{{ URL::asset('storage/creations/'.$creation->creation.'.'.$creation->type_file) }}" alt="Postingan" class="mw-100 rounded-3 border" style="max-height: 25rem;">
                 </div>
-                <div class="d-flex justify-content-between mb-2 mt-3">
+                @endisset
+                <div class="d-flex justify-content-between mb-2">
                     <div>
                         <button 
                             class="btn btn-link btn-like p-0 text-decoration-none text-danger me-2"
@@ -147,9 +163,6 @@ $(document).ready(function() {
 
         var file = this.files[0];
         if (file) {
-            var fileName = file.name;
-            $('#fileNameDisplay').text(fileName);
-
             // Show preview based on file type
             if (file.type.startsWith('image/')) {
                 var reader = new FileReader();
@@ -176,7 +189,6 @@ $(document).ready(function() {
         // Hide preview
         $('#previewContainer').hide();
         $('#imagePreview, #videoPreview').hide();
-        $('#fileNameDisplay').text('');
     });
 });
 </script>

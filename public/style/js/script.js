@@ -460,17 +460,27 @@ $(document).ready(function(){
 });
 
 // Modal
-// Modal Open
-function openModal() {
-    $("#modal").removeClass("d-none").animate({
+
+// Modal Post Open
+function openModalPost() {
+    $("#modal-post").removeClass("d-none").animate({
         opacity: 1
     }, 100);
+}
+
+// Modal Delete Open
+function openModalDelete(creation) {
+    $("#modal-delete").removeClass("d-none").animate({
+        opacity: 1
+    }, 100);
+    $('#modal-delete').find('input[name="creation"]').val(creation);
 }
 
 $(document).ready(function () {
     // Modal Close
     $(".modal-close").click(function (e) {
-        $(e.target).closest("#modal").animate({
+        $('#modal-delete').find('input[name="creation"]').val(null);
+        $(e.target).closest(".modal").animate({
             opacity: 0
         }, 100, function () {
             $(this).addClass("d-none");

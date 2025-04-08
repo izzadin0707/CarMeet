@@ -48,7 +48,23 @@ class UploadController extends Controller
         $category = $request->has('category') ? $request->input('category') : null;
 
         if ($file || $desc) {
-            $mimeType = $file->getMimeType();
+            $userId = Auth::id();
+            $creation = null;
+            $type = null;
+            if ($file) {
+                $mimeType = $file->getMimeType();
+                $creation = date('Ymd') . '0' . $userId . '0' . $category;
+
+                if (Str::startsWith($mimeType, 'image')) $type = 'png';
+                elseif (Str::startsWith($mimeType, 'video')) $type = 'mp4';
+                else return redirect()->back()->with('status', 'Failed to upload the file.');
+            }
+            
+            $creationEdit = Creations::createCreation($title, $desc, $creation, $type, $category, $userId);
+
+            if ($file) $file->move(public_path('storage/creations'), $creationEdit.'.'.$type);
+            return redirect()->back();
+     
             // $categories = Categories::all();
             // foreach ($categories as $c){
             //     if($c->id == $category){
@@ -56,24 +72,22 @@ class UploadController extends Controller
                     
             //     }
             // }
-            $userId = Auth::id();
-            $creation = date('Ymd') . '0' . $userId . '0' . $category;
 
-            if (Str::startsWith($mimeType, 'image')) {
-                $creationEdit = Creations::createCreation($title, $desc, $creation, 'png', $category, $userId);
-                $file->move(public_path('storage/creations'), $creationEdit.'.png');
-                return redirect()->back();
-                // return redirect('/profile');
-            }
-            elseif (Str::startsWith($mimeType, 'video')) {
-                $creationEdit = Creations::createCreation($title, $desc, $creation, 'mp4', $category, $userId);
-                $file->move(public_path('storage/creations'), $creationEdit.'.mp4');
-                return redirect()->back();
-                // return redirect('/profile');
-            }
-            else {
-                return redirect()->back()->with('status', 'Failed to upload the file.');
-            }
+            // if (Str::startsWith($mimeType, 'image')) {
+            //     $creationEdit = Creations::createCreation($title, $desc, $creation, 'png', $category, $userId);
+            //     $file->move(public_path('storage/creations'), $creationEdit.'.png');
+            //     return redirect()->back();
+            //     // return redirect('/profile');
+            // }
+            // elseif (Str::startsWith($mimeType, 'video')) {
+            //     $creationEdit = Creations::createCreation($title, $desc, $creation, 'mp4', $category, $userId);
+            //     $file->move(public_path('storage/creations'), $creationEdit.'.mp4');
+            //     return redirect()->back();
+            //     // return redirect('/profile');
+            // }
+            // else {
+            //     return redirect()->back()->with('status', 'Failed to upload the file.');
+            // }
         }
         return redirect()->back()->with('status', 'No file uploaded.');
     }
@@ -109,15 +123,21 @@ class UploadController extends Controller
                 Comments::where('creation_id', $creation->id)->delete();
                 Report::where('creation_id', $creation->id)->delete();
                 $file = $creation->creation . $creation->type_file;
+
+                $existingFile = public_path('storage/creations/' . $creation->creation . '.' . $creation->type_file);
+                if (file_exists($existingFile)) {
+                    unlink($existingFile); // Menghapus file
+                }
+
                 if($creation->delete()){
-                    return redirect('/profile')->with('message', 'Success Deleted Creation!');
+                     return redirect()->back()->with('message', 'Success Deleted Creation!');
                 } else {
-                    return redirect('/profile')->with('error', 'Failed Deleted Creation!');
+                     return redirect()->back()->with('error', 'Failed Deleted Creation!');
                 }
             } else {
-                return redirect('/profile')->with('error', 'Creation Not Found!');
+                 return redirect()->back()->with('error', 'Creation Not Found!');
             }
         }
-        return redirect('/profile')->with('error', 'Creation Not Found!');
+        return redirect()->back()->with('error', 'Creation Not Found!');
     }
 }

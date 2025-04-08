@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories');
             $table->string('title');
             $table->text('desc')->nullable();
-            $table->bigInteger('creation');
-            $table->string('type_file');
+            $table->bigInteger('creation')->nullable();
+            $table->string('type_file')->nullable();
             $table->integer('likes');
             $table->integer('comments');
             $table->timestamps();

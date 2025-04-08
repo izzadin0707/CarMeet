@@ -1,60 +1,25 @@
-<div class="mb-3">
+<div class="mb-3 shadow-sm">
     <form action="{{ route("home") }}" method="get" class="input-group align-self-center" role="search">
-        @csrf
         <span class="input-group-text rounded-start"><i class="bi bi-search"></i></span>
         <input class="form-control rounded-end" type="search" name="search" id="search" placeholder="Search" aria-label="Search">
+        @csrf
     </form>
 </div>
-{{-- <div class="card mb-3">
-    <div class="card-header">
-        Saran Untuk Anda
-    </div>
-    <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <img src="{{ asset('default-profile.png') }}" 
-                     class="rounded-circle me-3" 
-                     style="width: 40px; height: 40px; object-fit: cover;">
-                <div>
-                    <h6 class="mb-0">Pengguna 1</h6>
-                    <small class="text-muted">@user1</small>
-                </div>
-            </div>
-            <button class="btn btn-sm btn-outline-primary">Ikuti</button>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <img src="{{ asset('default-profile.png') }}" 
-                     class="rounded-circle me-3" 
-                     style="width: 40px; height: 40px; object-fit: cover;">
-                <div>
-                    <h6 class="mb-0">Pengguna 2</h6>
-                    <small class="text-muted">@user2</small>
-                </div>
-            </div>
-            <button class="btn btn-sm btn-outline-primary">Ikuti</button>
-        </li>
-    </ul>
-</div> --}}
 
-<div class="card">
-    <div class="card-header">
-        Event Terbaru
+<div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Event Terbaru</span>
+        <a href="{{ route('event') }}" class="text-primary text-decoration-none" style="font-size: .85rem">See More</a>
     </div>
     <ul class="list-group list-group-flush">
+        @foreach ($eventsAll as $event)
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="mb-1">Konser Musik</h6>
-                <small class="text-muted">20 Mei 2025</small>
+                <h6 class="mb-1">{{ $event->title }}</h6>
+                <small class="text-muted">{{date('d F Y', strtotime($event->start_date))}}</small>
             </div>
-            <a href="#" class="btn btn-sm btn-outline-secondary">Lihat</a>
+            <a href="{{ route('event-detail', ['id' => $event->id]) }}" class="btn btn-sm btn-outline-secondary">See</a>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <h6 class="mb-1">Pameran Seni</h6>
-                <small class="text-muted">15 Juni 2025</small>
-            </div>
-            <a href="#" class="btn btn-sm btn-outline-secondary">Lihat</a>
-        </li>
+        @endforeach
     </ul>
 </div>

@@ -33,17 +33,21 @@ class Creations extends Model
 
         $newCreation->save();
 
-        $creationId = $newCreation->id;
+        $creationEdit = null;
+        if (!empty($creation)) {
+            $creationId = $newCreation->id;
+    
+            $creationToUpdate = Creations::find($creationId);
+    
+            $creation = $newCreation->creation;
+    
+            $creationEdit = $creation . '0' . $creationId;
+    
+            $creationToUpdate->creation = $creationEdit;     
+    
+            $creationToUpdate->save();
+        }
 
-        $creationToUpdate = Creations::find($creationId);
-
-        $creation = $newCreation->creation;
-
-        $creationEdit = $creation . '0' . $creationId;
-
-        $creationToUpdate->creation = $creationEdit;     
-
-        $creationToUpdate->save();
 
         return $creationEdit;
     }

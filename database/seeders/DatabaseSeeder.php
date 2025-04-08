@@ -19,23 +19,23 @@ class DatabaseSeeder extends Seeder
     {
         // Categories
         Categories::create([
-            'name' => 'Art',
-            'slug' => 'art'
+            'name' => 'General',
+            'slug' => 'general'
         ]);
         
         Categories::create([
-            'name' => 'Animation',
-            'slug' => 'animation'
+            'name' => 'Mods & Tech',
+            'slug' => 'mods_tech'
         ]);
         
         Categories::create([
-            'name' => 'Design',
-            'slug' => 'design'
+            'name' => 'Car Showcase',
+            'slug' => 'car_showcase'
         ]);
 
         Categories::create([
-            'name' => 'Music',
-            'slug' => 'music'
+            'name' => 'Help & Tips',
+            'slug' => 'help_tips'
         ]);
 
         // Roles

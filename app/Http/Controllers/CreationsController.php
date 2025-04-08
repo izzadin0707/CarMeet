@@ -28,14 +28,15 @@ class CreationsController extends Controller
 
     public function index(Request $request) {
         if($this->validateBan()){
+            $page = 'general';
+            if ($request->has('search')) $page = 'explore';
             $search = $request->query('search');
             return view('home', [
-                "color" => Auth::user()->color,
-                "font" => Auth::user()->font,
+                "page" => $page,
                 "auth_assets" => Assets::where('user_id', Auth::id())->get(),
                 "assets" => Assets::all(),
                 "user" => Auth::user(),
-                "events" => Event::all(),
+                "eventsAll" => Event::all(),
                 "creations" => Creations::with(['users', 'categorys'])->where('title', 'LIKE', '%'.$request->input('search').'%')->orWhere('desc', 'LIKE', '%'.$request->input('search').'%')->latest()->get(),
                 "likes" => Likes::all(),
                 "saves" => Saves::all(),

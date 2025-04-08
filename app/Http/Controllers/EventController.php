@@ -3,14 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assets;
+use App\Models\Creations;
 use App\Models\Event;
+use App\Models\Likes;
 use App\Models\Report;
+use App\Models\Saves;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
+    public function index(Request $request) {
+        $search = $request->query('search');
+        return view('event', [
+            "page" => "event",
+            "auth_assets" => Assets::where('user_id', Auth::id())->get(),
+            "assets" => Assets::all(),
+            "user" => Auth::user(),
+            "eventsAll" => Event::all(),
+            "events" => Event::with('user')->where('title', 'LIKE', '%'.$search.'%')->latest()->get(),
+            "likes" => Likes::all(),
+            "saves" => Saves::all(),
+            "search" => $search,
+        ]);
+    }
+
+    public function detail($id) {
+        return view('event-detail', [
+            "page" => "event",
+            "auth_assets" => Assets::where('user_id', Auth::id())->get(),
+            "assets" => Assets::all(),
+            "user" => Auth::user(),
+            "eventsAll" => Event::all(),
+            "event" => Event::with('user')->where('id', $id)->first(),
+        ]);
+    }
+    
     public static function eventView($id = null) {
         if ($id == null) {
             return view('dashboard.event-view', [

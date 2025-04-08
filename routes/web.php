@@ -9,8 +9,6 @@ use App\Http\Controllers\CreationsController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VerificationController;
-use App\Models\Creations;
-use App\Models\Event;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,5 +116,7 @@ Route::get('/posts', [CreationsController::class, 'allPost']);
 
 Route::get('/', [CreationsController::class, 'index'])->middleware('auth')->name('home');
 
+Route::get('/event', [EventController::class, 'index'])->middleware('auth')->name('event');
+Route::get('/event/{id}', [EventController::class, 'detail'])->middleware('auth')->name('event-detail');
 
 
