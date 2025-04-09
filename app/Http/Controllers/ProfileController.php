@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assets;
+use App\Models\Banned;
+use App\Models\Comments;
 use App\Models\Creations;
+use App\Models\Event;
 use App\Models\Likes;
+use App\Models\Saves;
 use App\Models\Users;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -13,18 +17,32 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
-    public function index(){
-        $id = Auth::id();
-        return view('profile', [
-            "user" => Auth::user(),
-            "color" => Auth::user()->color,
-            "font" => Auth::user()->font,
-            "creations" => Creations::with(['categorys'])->where('user_id', $id)->latest()->get(),
-            "posts" => Creations::where('user_id', $id)->count(),
-            "auth_assets" => Assets::where('user_id', $id)->get(),
-            "assets" => Assets::where('user_id', $id)->get(),
-            "likes" => Likes::where('creation_user_id', $id)->count()
-        ]);
+    public function validateBan(){
+        if(Banned::where('user_id', Auth::id())->first() == null){
+            return true;
+        }else{
+            Auth::logout();
+            return redirect('/')->withErrors(['email' => 'You Account Status Is Banned!']);
+        }
+    }
+    
+    public function index($tab = null){
+        if($this->validateBan()){
+            $page = $tab == null ? 'posting' : $tab;
+            $creation = Creations::with(['users', 'categorys'])->where('user_id', Auth::id());
+
+            return view('profile', [
+                "page" => $page,
+                "auth_assets" => Assets::where('user_id', Auth::id())->get(),
+                "assets" => Assets::all(),
+                "user" => Auth::user(),
+                "eventsAll" => Event::all(),
+                "creations" => $creation->latest()->get(),
+                "likes" => Likes::all(),
+                "saves" => Saves::all(),
+                "comments" => Comments::with('creations.categorys')->latest()->get(),
+            ]);
+        }
     }
 
     public function profile($username){

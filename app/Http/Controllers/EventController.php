@@ -21,7 +21,7 @@ class EventController extends Controller
             "auth_assets" => Assets::where('user_id', Auth::id())->get(),
             "assets" => Assets::all(),
             "user" => Auth::user(),
-            "eventsAll" => Event::all(),
+            "eventsAll" => Event::latest()->get()->take(6),
             "events" => Event::with('user')->where('title', 'LIKE', '%'.$search.'%')->latest()->get(),
             "likes" => Likes::all(),
             "saves" => Saves::all(),
@@ -30,14 +30,45 @@ class EventController extends Controller
     }
 
     public function detail($id) {
-        return view('event-detail', [
-            "page" => "event",
-            "auth_assets" => Assets::where('user_id', Auth::id())->get(),
-            "assets" => Assets::all(),
-            "user" => Auth::user(),
-            "eventsAll" => Event::all(),
-            "event" => Event::with('user')->where('id', $id)->first(),
-        ]);
+        if(Event::where('id', $id)->first() !== null){
+            return view('event-detail', [
+                "page" => "event",
+                "auth_assets" => Assets::where('user_id', Auth::id())->get(),
+                "assets" => Assets::all(),
+                "user" => Auth::user(),
+                "eventsAll" => Event::all(),
+                "event" => Event::with('user')->where('id', $id)->first(),
+            ]);
+        } else {
+            abort(404);
+        }
+    }
+
+    public function form($id = null) {
+        if ($id) {
+            if(Event::where('id', $id)->first() !== null){
+                $event = Event::where('id', $id)->first();
+                return view('event-form', [
+                    "page" => 'event',
+                    "assets" => Assets::all(),
+                    "user" => Auth::user(),
+                    "eventsAll" => Event::all(),
+                    "event" => $event,
+                    'auth_assets' => Assets::where('user_id', Auth::guard('admin')->id())->get(),
+                ]);
+            }else{
+                abort(404);
+            }
+        } else {
+            return view('event-form', [
+                "page" => 'event',
+                "assets" => Assets::all(),
+                "user" => Auth::user(),
+                "eventsAll" => Event::all(),
+                'auth_assets' => Assets::where('user_id', Auth::guard('admin')->id())->get(),
+            ]);
+        }
+
     }
     
     public static function eventView($id = null) {
@@ -78,7 +109,8 @@ class EventController extends Controller
             if (Str::startsWith($mimeType, 'image')) {
                 $creationEdit = Event::createCreation($userId, $title, $desc, $asset, $start_date, $end_date);
                 $file->move(public_path('storage/events'), $creationEdit.'.png');
-                return redirect('/dashboard/events');
+                // return redirect('/dashboard/events');
+                return redirect()->back()->with('status', 'success upload event!');
             } else {
                 return redirect()->back()->with('status', 'Failed to upload the file.');
             }
@@ -110,12 +142,14 @@ class EventController extends Controller
                         
                         // Menyimpan file baru
                         $file->move(public_path('storage/events'), $asset . '.png');
-                        return redirect('/dashboard/events')->with('status', 'Event updated successfully.');
+                        return redirect()->back()->with('status', 'Success update event!');
+                        // return redirect('/dashboard/events')->with('status', 'Event updated successfully.');
                     } else {
                         return redirect()->back()->with('status', 'Failed to upload the file. Only image files are allowed.');
                     }
                 } else {
-                    return redirect('/dashboard/events')->with('status', 'Event updated successfully.');
+                    return redirect()->back()->with('status', 'Success update event!');
+                    // return redirect('/dashboard/events')->with('status', 'Event updated successfully.');
                 }
             } else {
                 return redirect()->back()->with('status', 'Failed to update event.');
@@ -138,7 +172,8 @@ class EventController extends Controller
     
             // Menghapus event dari database
             if ($event->delete()) {
-                return redirect('/dashboard/events')->with('status', 'Event deleted successfully.');
+                // return redirect('/dashboard/events')->with('status', 'Event deleted successfully.');
+                return redirect()->route('event')->with('status', 'success upload event!');
             } else {
                 return redirect()->back()->with('status', 'Failed to delete event.');
             }

@@ -6,9 +6,8 @@
                 <i class="bi bi-x fs-3 text-muted modal-close" style="cursor: pointer;"></i>
             </div> --}}
             <div class="card-body">
-                <form action="{{ route('delete') }}" method="POST">
+                <form action="" method="">
                     @csrf
-                    <input type="hidden" name="creation" value="">
                     <h5>Delete post?</h5>
                     <p>This action cannot be undone and will be permanently removed.</p>
                     <div class="d-flex gap-3 mt-4">

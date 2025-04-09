@@ -26,22 +26,62 @@ class CreationsController extends Controller
         }
     }
 
-    public function index(Request $request) {
+    public function index(Request $request, $category = 'general') {
         if($this->validateBan()){
             $page = 'general';
-            if ($request->has('search')) $page = 'explore';
             $search = $request->query('search');
+            $creation = Creations::with(['users', 'categorys']);
+            
+            if ($category) {
+                $categoryModel = Categories::where('slug', $category)->firstOrFail();
+                $page = $category;
+                $creation = $creation->where('category_id', $categoryModel->id);
+            }
+
+            if ($request->has('search')) {
+                $page = 'explore';
+                $creation = $creation->where(function ($query) use ($search) {
+                    $query->where('title', 'LIKE', '%' . $search . '%')
+                        ->orWhere('desc', 'LIKE', '%' . $search . '%');
+                });
+            }
+
+
             return view('home', [
                 "page" => $page,
                 "auth_assets" => Assets::where('user_id', Auth::id())->get(),
                 "assets" => Assets::all(),
                 "user" => Auth::user(),
                 "eventsAll" => Event::all(),
-                "creations" => Creations::with(['users', 'categorys'])->where('title', 'LIKE', '%'.$request->input('search').'%')->orWhere('desc', 'LIKE', '%'.$request->input('search').'%')->latest()->get(),
+                "creations" => $creation->latest()->get(),
                 "likes" => Likes::all(),
                 "saves" => Saves::all(),
+                "comments" => Comments::all(),
                 "search" => $search,
             ]);
+        }
+    }
+
+    public function detail($category, $id) {
+        if($this->validateBan()){
+            $page = $category == 'general' ? '' : $category;
+            if (Creations::where('id', $id) != null) {
+                $creation = Creations::with(['users', 'categorys']);
+
+                return view('post-detail', [
+                    "page" => $page,
+                    "auth_assets" => Assets::where('user_id', Auth::id())->get(),
+                    "assets" => Assets::all(),
+                    "user" => Auth::user(),
+                    "eventsAll" => Event::all(),
+                    "creation" => $creation->where('id', $id)->first(),
+                    "comments" => Comments::with(['users'])->where('creation_id', $id)->latest()->get(),
+                    "likes" => Likes::all(),
+                    "saves" => Saves::all(),
+                ]);
+            } else {
+                abort(404);
+            }
         }
     }
 
@@ -244,6 +284,8 @@ class CreationsController extends Controller
                 $res['result'] = true;
             }
         }
+
+        $res['save_counts'] = Saves::where('creation_id', $creation_id)->count();
         return response()->json($res);
     }
 
@@ -262,6 +304,8 @@ class CreationsController extends Controller
                 $res['result'] = true;
             }
         }
+
+        $res['save_counts'] = Saves::where('creation_id', $creation_id)->count();
         return response()->json($res);
     }
 
@@ -276,10 +320,10 @@ class CreationsController extends Controller
         ]);
 
         if($comment->save()){
-            return true;
+            return redirect()->back()->with('status', 'Comment added successfully.');
         }
         
-        return false;
+        return redirect()->back()->with('status', 'Failed to add comment.');
     }
 
     public function removeComment(Request $request) {
@@ -288,11 +332,11 @@ class CreationsController extends Controller
         $existingComment = Comments::where('id', $comment_id)->where('user_id', Auth::id())->first();
         if ($existingComment) {
             if ($existingComment->delete()) {
-                return true;
+                return redirect()->back()->with('status', 'Comment removed successfully.');
             } else {
-                return false;
+                return redirect()->back()->with('status', 'Failed to remove comment.');
             }
         }
-        return false;
+        return redirect()->back()->with('status', 'Failed to remove comment.');
     }
 }

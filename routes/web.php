@@ -22,41 +22,41 @@ use App\Http\Controllers\VerificationController;
 */
 
 //Admin
-Route::get('/dashboard/login', [AdminController::class, 'loginForm'])->middleware('auth')->name('dashboard-login-form');
-Route::post('/dashboard/login', [AdminController::class, 'login'])->name('dashboard-login');
-Route::get('/dashboard/logout', [AdminController::class, 'logout'])->name('dashboard-logout');
+// Route::get('/dashboard/login', [AdminController::class, 'loginForm'])->middleware('auth')->name('dashboard-login-form');
+// Route::post('/dashboard/login', [AdminController::class, 'login'])->name('dashboard-login');
+// Route::get('/dashboard/logout', [AdminController::class, 'logout'])->name('dashboard-logout');
 
-Route::get('/dashboard', [AdminController::class, 'index'])->middleware('auth.admin')->name('dashboard');
-Route::get('/dashboard/report', [AdminController::class, 'allReport'])->middleware('auth.admin')->name('dashboard-reports');
-Route::get('/dashboard/users', [AdminController::class, 'allUser'])->middleware('auth.admin')->name('dashboard-users');
-Route::get('/dashboard/creations', [AdminController::class, 'allCreation'])->middleware('auth.admin')->name('dashboard-creations');
-Route::get('/dashboard/comments', [AdminController::class, 'allComment'])->middleware('auth.admin')->name('dashboard-comments');
-Route::get('/dashboard/events', [AdminController::class, 'allEvent'])->middleware('auth.admin')->name('dashboard-events');
+// Route::get('/dashboard', [AdminController::class, 'index'])->middleware('auth.admin')->name('dashboard');
+// Route::get('/dashboard/report', [AdminController::class, 'allReport'])->middleware('auth.admin')->name('dashboard-reports');
+// Route::get('/dashboard/users', [AdminController::class, 'allUser'])->middleware('auth.admin')->name('dashboard-users');
+// Route::get('/dashboard/creations', [AdminController::class, 'allCreation'])->middleware('auth.admin')->name('dashboard-creations');
+// Route::get('/dashboard/comments', [AdminController::class, 'allComment'])->middleware('auth.admin')->name('dashboard-comments');
+// Route::get('/dashboard/events', [AdminController::class, 'allEvent'])->middleware('auth.admin')->name('dashboard-events');
 
-Route::post('/dashboard/change-role', [AdminController::class, 'changeRole'])->middleware('auth.admin')->name('change-role');
+// Route::post('/dashboard/change-role', [AdminController::class, 'changeRole'])->middleware('auth.admin')->name('change-role');
 
-Route::post('/dashboard/users-search', [AdminController::class, 'usersSearch'])->middleware('auth.admin')->name('dashboard-users-search');
-Route::post('/dashboard/creations-search', [AdminController::class, 'creationsSearch'])->middleware('auth.admin')->name('dashboard-creations-search');
-Route::post('/dashboard/event-search', [AdminController::class, 'commentsSearch'])->middleware('auth.admin')->name('dashboard-comments-search');
-Route::post('/dashboard/reports-search', [AdminController::class, 'reportsSearch'])->middleware('auth.admin')->name('dashboard-reports-search');
-Route::post('/dashboard/event-search', [AdminController::class, 'eventSearch'])->middleware('auth.admin')->name('dashboard-event-search');
+// Route::post('/dashboard/users-search', [AdminController::class, 'usersSearch'])->middleware('auth.admin')->name('dashboard-users-search');
+// Route::post('/dashboard/creations-search', [AdminController::class, 'creationsSearch'])->middleware('auth.admin')->name('dashboard-creations-search');
+// Route::post('/dashboard/event-search', [AdminController::class, 'commentsSearch'])->middleware('auth.admin')->name('dashboard-comments-search');
+// Route::post('/dashboard/reports-search', [AdminController::class, 'reportsSearch'])->middleware('auth.admin')->name('dashboard-reports-search');
+// Route::post('/dashboard/event-search', [AdminController::class, 'eventSearch'])->middleware('auth.admin')->name('dashboard-event-search');
 
-Route::get('/dashboard/report/read/{id}', [ReportController::class, 'reportRead'])->middleware('auth.admin')->name('dashboard-report-read');
-Route::get('/dashboard/report/drop/{id}', [ReportController::class, 'reportDrop'])->middleware('auth.admin')->name('dashboard-report-drop');
-Route::get('/dashboard/users/{id}', [ReportController::class, 'usersView'])->middleware('auth.admin')->name('dashboard-users-view');
-Route::get('/dashboard/creations/{id}', [ReportController::class, 'creationsView'])->middleware('auth.admin')->name('dashboard-creations-view');
-Route::get('/dashboard/comments/{id}', [ReportController::class, 'commentsView'])->middleware('auth.admin')->name('dashboard-comments-view');
-Route::get('/dashboard/event/{id}', [EventController::class, 'eventView'])->middleware('auth.admin')->name('dashboard-event-edit');
-Route::get('/dashboard/event', [EventController::class, 'eventView'])->middleware('auth.admin')->name('dashboard-event-view');
+// Route::get('/dashboard/report/read/{id}', [ReportController::class, 'reportRead'])->middleware('auth.admin')->name('dashboard-report-read');
+// Route::get('/dashboard/report/drop/{id}', [ReportController::class, 'reportDrop'])->middleware('auth.admin')->name('dashboard-report-drop');
+// Route::get('/dashboard/users/{id}', [ReportController::class, 'usersView'])->middleware('auth.admin')->name('dashboard-users-view');
+// Route::get('/dashboard/creations/{id}', [ReportController::class, 'creationsView'])->middleware('auth.admin')->name('dashboard-creations-view');
+// Route::get('/dashboard/comments/{id}', [ReportController::class, 'commentsView'])->middleware('auth.admin')->name('dashboard-comments-view');
+// Route::get('/dashboard/event/{id}', [EventController::class, 'eventView'])->middleware('auth.admin')->name('dashboard-event-edit');
+// Route::get('/dashboard/event', [EventController::class, 'eventView'])->middleware('auth.admin')->name('dashboard-event-view');
 
-Route::get('/dashboard/users/banned/{id}', [ReportController::class, 'bannedUser'])->middleware('auth.admin')->name('dashboard-users-banned');
-Route::get('/dashboard/users/unbanned/{id}', [ReportController::class, 'unbannedUser'])->middleware('auth.admin')->name('dashboard-users-unbanned');
-Route::get('/dashboard/creations/deleted/{id}', [ReportController::class, 'deletedCreation'])->middleware('auth.admin')->name('dashboard-creations-deleted');
-Route::get('/dashboard/comments/deleted/{id}', [ReportController::class, 'deletedComment'])->middleware('auth.admin')->name('dashboard-comments-deleted');
+// Route::get('/dashboard/users/banned/{id}', [ReportController::class, 'bannedUser'])->middleware('auth.admin')->name('dashboard-users-banned');
+// Route::get('/dashboard/users/unbanned/{id}', [ReportController::class, 'unbannedUser'])->middleware('auth.admin')->name('dashboard-users-unbanned');
+// Route::get('/dashboard/creations/deleted/{id}', [ReportController::class, 'deletedCreation'])->middleware('auth.admin')->name('dashboard-creations-deleted');
+// Route::get('/dashboard/comments/deleted/{id}', [ReportController::class, 'deletedComment'])->middleware('auth.admin')->name('dashboard-comments-deleted');
 
-Route::post('/dashboard/event/upload', [EventController::class, 'upload'])->middleware('auth.admin')->name('dashboard-event-upload');
-Route::post('/dashboard/event/update', [EventController::class, 'update'])->middleware('auth.admin')->name('dashboard-event-update');
-Route::get('/dashboard/event/delete/{id}', [EventController::class, 'delete'])->middleware('auth.admin')->name('dashboard-event-delete');
+// Route::post('/dashboard/event/upload', [EventController::class, 'upload'])->middleware('auth.admin')->name('dashboard-event-upload');
+// Route::post('/dashboard/event/update', [EventController::class, 'update'])->middleware('auth.admin')->name('dashboard-event-update');
+// Route::get('/dashboard/event/delete/{id}', [EventController::class, 'delete'])->middleware('auth.admin')->name('dashboard-event-delete');
 
 //Users
 
@@ -68,29 +68,29 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 // Route::post('/resend', [AuthController::class, 'resend'])->name('resend_verify');
 // Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 
-Route::get('/upload', [UploadController::class, 'index'])->middleware('auth');
+// Route::get('/upload', [UploadController::class, 'index'])->middleware('auth');
 Route::post('/upload', [UploadController::class, 'upload'])->name('upload');
 
-Route::get('/edit/{creation:creation}', [UploadController::class, 'edit'])->middleware('auth');
-Route::post('/update', [UploadController::class, 'update'])->name('update');
+// Route::get('/edit/{creation:creation}', [UploadController::class, 'edit'])->middleware('auth');
+// Route::post('/update', [UploadController::class, 'update'])->name('update');
 
-Route::get('/remove/{creation:creation}', [UploadController::class, 'remove'])->middleware('auth');
+// Route::get('/remove/{creation:creation}', [UploadController::class, 'remove'])->middleware('auth');
 Route::post('/delete', [UploadController::class, 'delete'])->name('delete');
 
-Route::post('/posts/search', [CreationsController::class, 'search'])->name('search');
+// Route::post('/posts/search', [CreationsController::class, 'search'])->name('search');
 
 Route::get('/posts/save', [CreationsController::class, 'showSave'])->name('saves');
 Route::post('/save', [CreationsController::class, 'save'])->name('save');
 Route::post('/unsave', [CreationsController::class, 'unsave'])->name('unsave');
 
-Route::get('/report/creation/{creation}', [ReportController::class, 'reportCreationView'])->name('report-creation-form');
-Route::get('/report/comment/{comment}', [ReportController::class, 'reportCommentView'])->name('report-comment-form');
-Route::get('/report/profile/{profile}', [ReportController::class, 'reportProfileView'])->name('report-profile-form');
+// Route::get('/report/creation/{creation}', [ReportController::class, 'reportCreationView'])->name('report-creation-form');
+// Route::get('/report/comment/{comment}', [ReportController::class, 'reportCommentView'])->name('report-comment-form');
+// Route::get('/report/profile/{profile}', [ReportController::class, 'reportProfileView'])->name('report-profile-form');
 Route::post('/report/creation', [ReportController::class, 'reportCreation'])->name('report.creation');
 Route::post('/report/comment', [ReportController::class, 'reportComment'])->name('report.comment');
 Route::post('/report/profile', [ReportController::class, 'reportProfile'])->name('report.profile');
 
-Route::post('/show-comment', [CreationsController::class, 'showComment'])->name('show-comment');
+// Route::post('/show-comment', [CreationsController::class, 'showComment'])->name('show-comment');
 Route::post('/remove-comment', [CreationsController::class, 'removeComment'])->name('remove-comment');
 Route::post('/comment', [CreationsController::class, 'comment'])->name('comment');
 
@@ -101,22 +101,29 @@ Route::post('/dislike', [CreationsController::class, 'dislike'])->name('dislike'
 Route::post('/photo-profile', [ProfileController::class, 'photoProfile'])->name('photo-profile');
 Route::post('/banner', [ProfileController::class, 'banner'])->name('banner');
 Route::post('/change-name', [ProfileController::class, 'changeName'])->name('change-name');
-Route::post('/background-color', [ProfileController::class, 'backgroundColor'])->name('background-color');
-Route::post('/font-color', [ProfileController::class, 'fontColor'])->name('font-color');
+// Route::post('/background-color', [ProfileController::class, 'backgroundColor'])->name('background-color');
+// Route::post('/font-color', [ProfileController::class, 'fontColor'])->name('font-color');
 Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change-password');
-Route::post('/reset-theme', [ProfileController::class, 'resetTheme'])->name('reset-theme');
+// Route::post('/reset-theme', [ProfileController::class, 'resetTheme'])->name('reset-theme');
 
-Route::get('/profile/setting', [ProfileController::class, 'profileSetting'])->middleware('auth')->name('profile-setting');
-Route::get('/profile/{username}', [ProfileController::class, 'profile']);
-Route::get('/profile', [ProfileController::class, 'index'])->middleware('auth');
+// Route::get('/profile/setting', [ProfileController::class, 'profileSetting'])->middleware('auth')->name('profile-setting');
+// Route::get('/profile/{username}', [ProfileController::class, 'profile'])->middleware('auth')->name('profile-view');
+Route::get('/profile/{tab?}', [ProfileController::class, 'index'])->middleware('auth')->name('profile');
 
 Route::get('/category/{category:slug}', [CreationsController::class, 'category'])->middleware('auth');;
 Route::get('/post/{creation:creation}', [CreationsController::class, 'post']);
 Route::get('/posts', [CreationsController::class, 'allPost']);
 
-Route::get('/', [CreationsController::class, 'index'])->middleware('auth')->name('home');
-
 Route::get('/event', [EventController::class, 'index'])->middleware('auth')->name('event');
+Route::get('/event/form/{id?}', [EventController::class, 'form'])->middleware('auth')->name('event-form');
+Route::post('/event/upload', [EventController::class, 'upload'])->middleware('auth')->name('event-upload');
+Route::post('/event/update', [EventController::class, 'update'])->middleware('auth')->name('event-update');
+Route::get('/event/delete/{id}', [EventController::class, 'delete'])->middleware('auth')->name('event-delete');
 Route::get('/event/{id}', [EventController::class, 'detail'])->middleware('auth')->name('event-detail');
+
+Route::get('/{category?}', [CreationsController::class, 'index'])->middleware('auth')->name('home');
+
+Route::get('/posting/{category}/{id}', [CreationsController::class, 'detail'])->middleware('auth')->name('post-detail');
+
 
 

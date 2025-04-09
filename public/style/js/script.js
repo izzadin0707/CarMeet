@@ -382,7 +382,7 @@ $(document).ready(function(){
                 _token: csrfToken
             },
             success: function(res) {          
-                clickedElement.find("span").text(res.like_counts)      
+                clickedElement.find("span").text(res.like_counts)
                 if (res.result == true) {
                     if (clickedElement.find("i").hasClass('bi-heart')) {
                         clickedElement.find("i").removeClass('bi-heart'); 
@@ -411,7 +411,8 @@ $(document).ready(function(){
                 creation_id: creation_id,
                 _token: csrfToken
             },
-            success: function(res) {                
+            success: function(res) {             
+                clickedElement.find("span").text(res.save_counts)   
                 if (res.result == true) {
                     if (clickedElement.closest(".card").find("i").hasClass('bi-bookmark-fill')) {
                         clickedElement.closest(".card").find("i").removeClass('bi-bookmark-fill'); 
@@ -445,7 +446,8 @@ $(document).ready(function(){
                 creation_id: creation_id,
                 _token: csrfToken
             },
-            success: function(res) {                
+            success: function(res) {          
+                clickedElement.find("span").text(res.save_counts)      
                 if (res.result == true) {
                     if (clickedElement.closest(".card").find("i").hasClass('bi-bookmark')) {
                         clickedElement.closest(".card").find("i").removeClass('bi-bookmark'); 
@@ -469,17 +471,25 @@ function openModalPost() {
 }
 
 // Modal Delete Open
-function openModalDelete(creation) {
+function openModalDelete(route, method, data = []) {
     $("#modal-delete").removeClass("d-none").animate({
         opacity: 1
     }, 100);
-    $('#modal-delete').find('input[name="creation"]').val(creation);
+
+    const form = $('#modal-delete').find('form');
+    form.attr('action', route);
+    form.attr('method', method);
+
+    $.each(data, function (key, val) {
+        form.append(`<input type="hidden" name="${key}" value="${val}">`);
+    })
 }
 
 $(document).ready(function () {
     // Modal Close
     $(".modal-close").click(function (e) {
         $('#modal-delete').find('input[name="creation"]').val(null);
+        $('#modal-delete').find('input[name="id"]').val(null);
         $(e.target).closest(".modal").animate({
             opacity: 0
         }, 100, function () {

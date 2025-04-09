@@ -1,149 +1,285 @@
 @extends('layouts.main')
 
-@section('container')
-@if (session('message'))
-<div class="d-flex justify-content-center">
-    <div class="alert alert-success rounded-4" style="width: 150vh;">
-        <span class="text-success-emphasis">{{ session('message') }}</span>
+@section('content')
+{{-- Posting Cepat --}}
+<div class="card mb-3 shadow-sm border-0">
+    <img src="{{ 
+        $auth_assets->where('status', 'photo-profile')->first()
+            ? URL::asset('storage/assets/' . $auth_assets->where('status', 'banner')->first()->asset . '.png') 
+            : URL::asset('photo-profile.png') }}" 
+        class="w-100 rounded-top-3" 
+        style="height: 12rem; object-fit: cover;">
+    <div class="card-body">
+        <div class="d-flex mb-3">
+            <img src="{{ 
+                $auth_assets->where('status', 'photo-profile')->first()
+                    ? URL::asset('storage/assets/' . $auth_assets->where('status', 'photo-profile')->first()->asset . '.png') 
+                    : URL::asset('photo-profile.png') }}" 
+                class="rounded-circle me-3 border border-5 border-white" 
+                style="width: 9rem; height: 9rem; object-fit: cover; margin-top: -5.5rem; ">
+            <div class="d-flex justify-content-end w-100">
+                <div>
+                    <button class="btn btn-outline-secondary">Profile Setting</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <span class="fs-2 fw-semibold">{{ $user->name }}</span>
+            <div style="margin-top: -5px;">
+                <small class="text-muted fs-6">{{ $user->username }}</small>
+                <br>
+                <small class="text-muted fs-6"><i class="bi bi-calendar me-2"></i> Joined at {{ date('F Y', strtotime($user->created_at)) }}</small>
+            </div>
+        </div>
     </div>
 </div>
-@endif
-@if (session('error'))
-<div class="d-flex justify-content-center">
-    <div class="alert alert-danger rounded-4" style="width: 150vh;">
-        <span class="text-danger-emphasis">{{ session('error') }}</span>
-    </div>
-</div>
-@endif
-<div class="container border mt-3 rounded-4" style="max-width: 150vh;">
-    <div class="row position-absolute">
-        <div class="dropdown dropend" style="margin-left: -13px;">
-            <a class="btn rounded-4" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-three-dots-vertical fs-5"></i>
-            </a>
-          
-            <ul class="dropdown-menu">
-                @if ($user->id == Auth::id())
-                <li><a class="dropdown-item" href="{{ route('profile-setting') }}"><i class="bi bi-gear me-2"> </i> Profile Setting</a></li>
-                <li><a class="dropdown-item" href="{{ route('saves') }}"><i class="bi bi-bookmark me-2"> </i> Save</a></li>
-                <li><a class="dropdown-item" href="{{ route('likes') }}"><i class="bi bi-heart me-2"> </i> Likes</a></li>
-                <li><a class="dropdown-item" href="{{ route('logout') }}"><i class="bi bi-box-arrow-left me-2"> </i> Logout</a></li>
-                @else
-                <li><a class="dropdown-item" href="{{ route('report-profile-form', ['profile' => $user->id]) }}"><i class="bi bi-megaphone me-2"> </i> Report</a></li>
-                @endif
-            </ul>
-          </div>
-    </div>
-    @if (count($assets) !==  0)    
-        @foreach ($assets as $asset)
-            @if ($assets->where('status', 'banner')->count() !== 0)
-                @if ($asset->status == 'banner')
-                <div class="row rounded-top-4" style="background-image: url('{{ URL::asset('storage/assets/'.$asset->asset.'.png') }}'); height: 20rem; background-size: cover; background-position: center; margin-bottom: -150px;"></div>    
-                @endif
-            @else
-            <div class="row rounded-top-4" style="background-color: grey; height: 20rem; background-size: cover; background-position: center; margin-bottom: -150px;"></div>
-            @endif
-        @endforeach
-    @else
-        <div class="row rounded-top-4" style="background-color: grey; height: 20rem; background-size: cover; background-position: center; margin-bottom: -150px;"></div>
-    @endif
-    <div class="text-center">
-        <div class="row pt-5 rounded-top profile-bg">
-            <div class="col">
-                
-                @if (count($assets) !==  0)    
-                    @foreach ($assets as $asset)
-                        @if ($assets->where('status', 'photo-profile')->count() != 0)
-                            @if ($asset->status == 'photo-profile')
-                            <img src="{{ URL::asset('storage/assets/'.$asset->asset.'.png') }}" alt="Photo Profile" class="rounded-circle border object-fit-cover" style="width: 200px; height: 200px;">    
-                            @endif
-                        @else
-                        <img src="{{ URL::asset('photo-profile.png') }}" alt="Photo Profile" class="rounded-circle border object-fit-cover" style="width: 200px; height: 200px;">                    
-                        @endif
-                    @endforeach
-                @else
-                    <img src="{{ URL::asset('photo-profile.png') }}" alt="Photo Profile" class="rounded-circle border object-fit-cover" style="width: 200px; height: 200px;">                    
-                @endif
 
-                <p class="fs-1 fw-semibold" style="margin-bottom: -1px">{{ $user->name }}</p>
-                <p class="fs-6">{{ $user->username }}</p>
-            </div>
-        </div>
-        <div class="row mt-4 mx-5">
-            <div class="col">
-                <p class="fs-2">{{ $posts }}</p>
-            </div>
-            <div class="col">
-                <p class="fs-2">{{ $likes }}</p>
-            </div>
-        </div>
-        <div class="row mx-5">
-            <div class="col">
-                <p class="fs-5">POST</p>
-            </div>
-            <div class="col">
-                <p class="fs-5">LIKE</p>
-            </div>
-        </div>
-        <div class="border mt-4 mb-3"></div>
-        <div class="row row-cols-3 mb-3" id="creationCard">
-            @foreach ($creations as $creation)
-            <div class="col my-2">
-              <a href="{{ url('post/'.$creation->creation) }}" class="text-decoration-none" style="color: var(--bs-body);">
-                @if ($creation->type_file == 'png')
-                <img src="{{ URL::asset('storage/creations/'.$creation->creation.'.'.$creation->type_file) }}" class="rounded rounded-3 border border-2" alt="..." style="height: 100%; width: 100%; object-fit: cover;">
-                @elseif ($creation->type_file == 'mp4')
-                <video id="previewVideo" class="rounded rounded-3 border border-2" style="height: 100%; width: 100%; object-fit: cover;">
-                <source src="{{ asset('storage/creations/'.$creation->creation.'.'.$creation->type_file.'#t=120') }}" type="video/{{ $creation->type_file }}">
-                  Maaf, browser Anda tidak mendukung pemutaran video.
-                </video>
-                <div style="margin-top: -50px; margin-left: 5px;" class="position-absolute"><i class="bi bi-play fs-4 px-2 py-1 align-top rounded" style="background-color: rgba(0, 0, 0, 0.7);"></i></div>
-                @endif
-              </a>
-            </div>
-            @endforeach
+<div class="card mb-2 shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex justify-content-between gap-3">
+            <a href="{{ route('profile', 'posting') }}" class="btn {{ isset($page) && $page == 'posting' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+                <span>Posting</span>
+            </a>
+            <a href="{{ route('profile', 'reply') }}" class="btn {{ isset($page) && $page == 'reply' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+                <span>Reply</span>
+            </a>
+            <a href="{{ route('profile', 'media') }}" class="btn {{ isset($page) && $page == 'media' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+                <span>Media</span>
+            </a>
+            <a href="{{ route('profile', 'like') }}" class="btn {{ isset($page) && $page == 'like' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+                <span>Like</span>
+            </a>
+            <a href="{{ route('profile', 'save') }}" class="btn {{ isset($page) && $page == 'save' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+                <span>Save</span>
+            </a>
         </div>
     </div>
 </div>
+
+
+@if (isset($page) && $page == 'posting') 
+
+{{-- Posting --}}
+@if (count($creations) <= 0)
+    <p class="text-muted text-center mt-5">no content available</p>
+@endif
+
+@foreach ($creations as $creation)
+<div class="card mb-3 shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex">
+            <img src="{{ 
+                $auth_assets->where('status', 'photo-profile')->first()
+                    ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
+                    : URL::asset('photo-profile.png') }}" 
+            class="rounded-circle me-3" 
+            style="width: 40px; height: 40px; object-fit: cover;">
+            <div class="w-100" >
+                <div class="d-flex justify-content-between mb-2" style="cursor: pointer;">
+                    <div class="w-100" onclick="window.location.href='{{ route('post-detail', ['category' => $creation->categorys->slug, 'id' => $creation->id]) }}'">
+                        <div class="text-nowrap">
+                            <a href="#" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
+                            @php
+                                $crea = date('Y', strtotime($creation->created_at));
+                                if (date('Y') == $crea) {
+                                    $crea = date('d', strtotime($creation->created_at));
+                                    if ( date('d') == $crea) {
+                                        $crea = $creation->created_at->diffForHumans();
+                                    } else {
+                                        $crea = date('d M', strtotime($creation->created_at));
+                                    }
+                                } else {
+                                    $crea = date('d M Y', strtotime($creation->created_at));
+                                }
+                            @endphp
+                            <small class="text-muted"> • {{ $crea }}</small>
+                        </div>
+                        @php
+                            $token = csrf_token();
+                            $desc = preg_replace_callback('/#(\w+)/', function ($match) use ($token) {
+                                $tag = $match[1];
+                                return '<a href="/?search=' . urlencode('#' . $tag) . '&_token=' . $token . '" class="text-primary">#' . $tag . '</a>';
+                            }, e($creation->desc));
+                        @endphp
+                        <p class="card-text">{!! $desc !!}</p>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-muted px-0" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            @if ($creation->user_id == $user->id)
+                                <li>
+                                    <a class="dropdown-item text-danger" href="#" onclick="openModalDelete('{{ route('delete') }}', 'POST', {creation: {{ $creation->id }}})">
+                                        Delete
+                                    </a>
+                                </li>
+                            @endif
+                            <li>
+                                <a 
+                                class="dropdown-item btn-save" 
+                                href="#" 
+                                data-user-id="{{ $user->id }}" 
+                                data-creation-id="{{ $creation->id }}">
+                                    Save
+                                </a>
+                            </li>
+                            @if ($creation->user_id != $user->id)
+                                <li><a class="dropdown-item" href="#">Report</a></li>
+                            @endif
+                        </ul>
+                    </div>
+                </div>
+                @isset($creation->creation)
+                <div class="mb-3" style="cursor: pointer;" onclick="window.location.href='{{ route('post-detail', ['category' => $creation->categorys->slug, 'id' => $creation->id])}}'">
+                    <img src="{{ URL::asset('storage/creations/'.$creation->creation.'.'.$creation->type_file) }}" alt="Postingan" class="mw-100 rounded-3 border" style="max-height: 25rem;">
+                </div>
+                @endisset
+                <div class="d-flex justify-content-between mb-2">
+                    <div>
+                        <button 
+                            class="btn btn-link btn-like p-0 text-decoration-none text-danger me-2"
+                            data-user-id="{{ $user->id }}" 
+                            data-creation-id="{{ $creation->id }}" 
+                            data-creation-user-id="{{ $creation->users->id }}">
+                            <i class="bi {{ $likes->where('user_id', $user->id)->where('creation_id', $creation->id)->first() ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+                            <span class="like-counts">{{ count($likes->where('creation_id', $creation->id)) }}</span>
+                        </button>
+                        <button class="btn btn-link p-0 text-decoration-none text-muted">
+                            <i class="bi {{ $comments->where('user_id', $user->id)->where('creation_id', $creation->id)->first() ? 'bi-chat-fill' : 'bi-chat' }}"></i>
+                            <span class="comment-counts">{{ count($comments->where('creation_id', $creation->id)) }}</span>
+                        </button>
+                    </div>
+                    <button 
+                        class="btn btn-link btn-save p-0 text-decoration-none text-muted"
+                        data-user-id="{{ $user->id }}" 
+                        data-creation-id="{{ $creation->id }}">
+                        <i class="bi {{ $saves->where('user_id', $user->id)->where('creation_id', $creation->id)->first() ? 'bi-bookmark-fill' : 'bi-bookmark' }}"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
+@endif
+
+@if (isset($page) && $page == 'reply')
+
+{{-- Replay --}}
+@if ($comments->where('user_id', $user->id)->count() <= 0)
+    <p class="text-muted text-center mt-5">no content available</p>
+@endif
+
+@foreach ($comments as $comment)   
+@if ($comment->user_id == $user->id)
+<div class="card mb-3 shadow-sm border-0">
+    <div class="card-body">
+        <div class="d-flex">
+            <img src="{{ 
+                $auth_assets->where('status', 'photo-profile')->first()
+                    ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $comment->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
+                    : URL::asset('photo-profile.png') }}" 
+            class="rounded-circle me-3" 
+            style="width: 40px; height: 40px; object-fit: cover;">
+            <div class="d-flex justify-content-between mb-2 w-100">
+                <div class="w-100" style="cursor: pointer;" onclick="window.location.href='{{ route('post-detail', ['category' => $comment->creations->categorys->slug, 'id' => $comment->creations->id]) }}'">
+                    @php
+                        $crea = date('Y', strtotime($comment->created_at));
+                        if (date('Y') == $crea) {
+                            $crea = date('d', strtotime($comment->created_at));
+                            if ( date('d') == $crea) {
+                                $crea = $comment->created_at->diffForHumans();
+                            } else {
+                                $crea = date('d M', strtotime($comment->created_at));
+                            }
+                        } else {
+                            $crea = date('d M Y', strtotime($comment->created_at));
+                        }
+                    @endphp
+                    <div class="text-nowrap">
+                        <span class="mb-0 fw-semibold">{{ $comment->users->name }}</span>
+                        <small class="text-muted"> • {{ $crea }}</small>
+                    </div>
+                    @php
+                        $token = csrf_token();
+                        $desc = preg_replace_callback('/#(\w+)/', function ($match) use ($token) {
+                            $tag = $match[1];
+                            return '<a href="/?search=' . urlencode('#' . $tag) . '&_token=' . $token . '" class="text-primary">#' . $tag . '</a>';
+                        }, e($comment->desc));
+                    @endphp
+                    <p class="card-text">{!! $desc !!}</p>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-link text-muted px-0" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        @if ($comment->user_id == $user->id)
+                            <li>
+                                <a class="dropdown-item text-danger" href="#" onclick="openModalDelete('{{ route('remove-comment') }}', 'POST', {comment_id: {{ $comment->id }}})">
+                                    Delete
+                                </a>
+                            </li>
+                        @endif
+                        @if ($comment->user_id != $user->id)
+                            <li><a class="dropdown-item" href="#">Report</a></li>
+                        @endif
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+@endforeach
+    
+@endif
+
 <script>
-    $(document).ready(function () {
-        if($("html").data('bg-color') !== undefined){
-            $("html").attr('data-bs-theme', 'light');
-            var bg = $("html").data('bg-color');
-            var font = $("html").data('font-color');
-            //Body
-            $("body").css('background-color', bg);
-            $("body").css('color', font);
-            //Main
-            $("#main *").css('color', `${font}`);
-            //Navbar
-            $("#myNavbar").css('background-color', bg);
-            $("#myNavbar *").css('color', `${font}`);
-            $("#myNavbar").removeClass('border-bottom');
-            $("#myNavbar").css('border', `solid ${font}`);
-            $("#myNavbar").css('border-width', `0px 0px 1px 0px`);
-            $("#search").css('background-color', bg);
-            $("#search").css('color', font);
-            $("#search").css('border-color', `${font}`);
-            //Sidebar
-            $("#mySidebar").css('background-color', bg);
-            $("#mySidebar").css('border-color', `${font}`);
-            $("#mySidebar *").css('color', `${font}`);
-            $("#profile").css('color', `${font}`);
-            $(".profileBar").css('border-color', `${font}`);
-            //Commentbar
-            $("#myCommentbar").css('background-color', bg);
-            $("#myCommentbar").css('border-color', `${font}`);
-            $("#comment-bar").removeClass('border-bottom');
-            $("#comment-bar").removeClass('border-top');
-            $("#comment-bar").css('border', `solid ${font}`);
-            $("#comment-bar").css('border-width', `1px 0px 1px 0px`);
-            //Dropdown
-            $(".dropdown-menu").css('background-color', bg);
-            //Border
-            $(".border").css('border', `1px solid ${font}`);
-            $(".border").removeClass('border');
+$(document).ready(function() {
+    // Media button click handler
+    $('#mediaButton').on('click', function() {
+        $('#mediaFileInput').click();
+    });
+
+    // File input change handler
+    $('#mediaFileInput').on('change', function() {
+        // Reset previous preview
+        $('#imagePreview, #videoPreview').hide();
+        $('#previewContainer').hide();
+
+        var file = this.files[0];
+        if (file) {
+            // Show preview based on file type
+            if (file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#imagePreview').attr('src', e.target.result).show();
+                    $('#videoPreview').hide();
+                    $('#previewContainer').show();
+                }
+                reader.readAsDataURL(file);
+            } else if (file.type.startsWith('video/')) {
+                var videoURL = URL.createObjectURL(file);
+                $('#videoPreview').attr('src', videoURL).show();
+                $('#imagePreview').hide();
+                $('#previewContainer').show();
+            }
         }
     });
-    </script>
+
+    // Remove preview handler
+    $('#removePreview').on('click', function() {
+        // Clear file input
+        $('#mediaFileInput').val('');
+        
+        // Hide preview
+        $('#previewContainer').hide();
+        $('#imagePreview, #videoPreview').hide();
+    });
+});
+</script>
+
 @endsection

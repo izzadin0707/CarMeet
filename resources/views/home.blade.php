@@ -18,6 +18,9 @@
     @else
     <form id="postForm" action="{{ route('upload') }}" method="POST" enctype="multipart/form-data">
       @csrf
+      @isset($page)
+      <input type="hidden" name="category" value="{{ $page }}">
+      @endisset
       <div class="d-flex mb-3">
           <img src="{{ 
               $auth_assets->where('status', 'photo-profile')->first()
@@ -59,7 +62,7 @@
 
 {{-- Feed Postingan --}}
 @if (count($creations) <= 0)
-    <p class="text-muted text-center">no content available</p>
+    <p class="text-muted text-center mt-5">no content available</p>
 @endif
 @foreach ($creations as $creation)
 
@@ -72,12 +75,25 @@
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
             style="width: 40px; height: 40px; object-fit: cover;">
-            <div class="w-100">
-                <div class="d-flex justify-content-between mb-2">
-                    <div>
+            <div class="w-100" >
+                <div class="d-flex justify-content-between mb-2" style="cursor: pointer;">
+                    <div class="w-100" onclick="window.location.href='{{ route('post-detail', ['category' => $page, 'id' => $creation->id]) }}'">
                         <div class="text-nowrap">
-                            <span class="mb-0 fw-semibold">{{ $creation->users->name }}</span>
-                            <small class="text-muted"> • {{ $creation->created_at->diffForHumans() }}</small>
+                            <a href="#" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
+                            @php
+                                $crea = date('Y', strtotime($creation->created_at));
+                                if (date('Y') == $crea) {
+                                    $crea = date('d', strtotime($creation->created_at));
+                                    if ( date('d') == $crea) {
+                                        $crea = $creation->created_at->diffForHumans();
+                                    } else {
+                                        $crea = date('d M', strtotime($creation->created_at));
+                                    }
+                                } else {
+                                    $crea = date('d M Y', strtotime($creation->created_at));
+                                }
+                            @endphp
+                            <small class="text-muted"> • {{ $crea }}</small>
                         </div>
                         @php
                             $token = csrf_token();
@@ -95,7 +111,7 @@
                         <ul class="dropdown-menu">
                             @if ($creation->user_id == $user->id)
                                 <li>
-                                    <a class="dropdown-item text-danger" href="#" onclick="openModalDelete({{ $creation->id }})">
+                                    <a class="dropdown-item text-danger" href="#" onclick="openModalDelete('{{ route('delete') }}', 'POST', {creation: {{ $creation->id }}})">
                                         Delete
                                     </a>
                                 </li>
@@ -116,7 +132,7 @@
                     </div>
                 </div>
                 @isset($creation->creation)
-                <div class="mb-3">
+                <div class="mb-3" style="cursor: pointer;" onclick="window.location.href='{{ route('post-detail', ['category' => $page, 'id' => $creation->id])}}'">
                     <img src="{{ URL::asset('storage/creations/'.$creation->creation.'.'.$creation->type_file) }}" alt="Postingan" class="mw-100 rounded-3 border" style="max-height: 25rem;">
                 </div>
                 @endisset
@@ -131,7 +147,8 @@
                             <span class="like-counts">{{ count($likes->where('creation_id', $creation->id)) }}</span>
                         </button>
                         <button class="btn btn-link p-0 text-decoration-none text-muted">
-                            <i class="bi bi-chat"></i> 0
+                            <i class="bi {{ $comments->where('user_id', $user->id)->where('creation_id', $creation->id)->first() ? 'bi-chat-fill' : 'bi-chat' }}"></i>
+                            <span class="comment-counts">{{ count($comments->where('creation_id', $creation->id)) }}</span>
                         </button>
                     </div>
                     <button 

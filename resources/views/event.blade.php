@@ -18,7 +18,7 @@
 </div>
 
 {{-- Create Event --}}
-<a href="#" class="btn btn-outline-primary w-100 fs-6 mb-3 pt-1 pb-2">Create your own event</a>
+<a href="{{ route('event-form') }}" class="btn btn-outline-primary w-100 fs-6 mb-3 pt-1 pb-2">Create your own event</a>
 
 {{-- Feed Postingan --}}
 @if (count($events) <= 0)
@@ -30,7 +30,7 @@
     
     <div class="card mb-3 shadow-sm border-0 position-relative" style="width: 49%;">
         <div class="position-absolute end-0 top-0" style="margin: 10px;">
-            <div class="bg-white pb-2 rounded-1 shadow-sm text-center fw-semibold" style="width: 3.2rem;">
+            <div class="bg-white pb-2 rounded-2 shadow-sm text-center fw-semibold" style="width: 3.2rem;">
                 <div style="margin-bottom: -12px;">
                     <span style="font-size: 1.9rem;">{{ date('d', strtotime($event->start_date)) }}</span>
                 </div>
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <img src="{{ URL::asset('storage/events/'.$event->asset.'.png') }}" alt="Postingan" class="mw-100 rounded-top-3 border" style="max-height: 15rem; object-fit: cover;">
+        <img src="{{ URL::asset('storage/events/'.$event->asset.'.png') }}" alt="Postingan" class="mw-100 rounded-top-3 border" style="height: 12rem; object-fit: cover;">
         <div class="card-body">
             <div class="d-flex">
                 <div class="w-100">

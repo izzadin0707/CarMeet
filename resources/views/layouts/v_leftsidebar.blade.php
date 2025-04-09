@@ -1,4 +1,4 @@
-<div class="card mb-3 shadow-sm border-0">
+<div class="card mb-3 shadow-sm border-0" style="cursor: pointer;" onclick="window.location.href='{{ route('profile') }}'">
     <div class="card-body">
         <div class="d-flex align-items-center mb-03">
             <img src="{{ 
@@ -13,14 +13,6 @@
                 <small class="text-muted">{{ $user->username }}</small>
             </div>
         </div>
-        {{-- <div class="d-flex justify-content-between">
-            <small>Followers</small>
-            <small>Following</small>
-        </div>
-        <div class="d-flex justify-content-between">
-            <strong>0</strong>
-            <strong>0</strong>
-        </div> --}}
     </div>
 </div>
 
@@ -28,13 +20,13 @@
     <a href="{{ route('home') }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'general' ? 'active' : '' }}">
         <i class="bi bi-chat-left-text me-2"></i> General
     </a>
-    <a href="#" class="list-group-item list-group-item-action {{ isset($page) && $page == 'mods_tech' ? 'active' : '' }}">
+    <a href="{{ route('home', ['category' => 'modstech']) }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'modstech' ? 'active' : '' }}">
         <i class="bi bi-tools me-2"></i>  Mods & Tech
     </a>
-    <a href="#" class="list-group-item list-group-item-action {{ isset($page) && $page == 'car_showcase' ? 'active' : '' }}">
+    <a href="{{ route('home', ['category' => 'carshowcase']) }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'carshowcase' ? 'active' : '' }}">
         <i class="bi bi-car-front-fill me-2"></i> Car Showcase
     </a>
-    <a href="#" class="list-group-item list-group-item-action {{ isset($page) && $page == 'help_tips' ? 'active' : '' }}">
+    <a href="{{ route('home', ['category' => 'helptips']) }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'helptips' ? 'active' : '' }}">
         <i class="bi bi-question-circle me-2"></i> Help & Tips
     </a>
 </div>
@@ -46,16 +38,23 @@
     <a href="{{ route('event') }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'event' ? 'active' : '' }}">
         <i class="bi bi-calendar me-2"></i> Event
     </a>
-    {{-- <a href="#" class="list-group-item list-group-item-action">
-        <i class="bi bi-chat me-2"></i> Pesan
-    </a> --}}
+    @auth
+    @if (Auth::user()->roles == 1)
+    <a href="#" class="list-group-item list-group-item-action {{ isset($page) && $page == 'report' ? 'active' : '' }}">
+        <i class="bi bi-megaphone me-2"></i> Report
+    </a>
+    @endif
+    @endauth
     <a href="#" class="list-group-item list-group-item-action" onclick="openModalPost()">
         <i class="bi bi-plus-square me-2"></i> Post
     </a>
 </div>
 
-{{-- <div class="card mb-3">
-    <div class="card-header">
-        <span class="fw-semibold">Channel</span>
-    </div>
-</div> --}}
+
+@auth
+<div class="list-group mb-3 shadow-sm">
+    <a href="{{ route('logout') }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'explore' ? 'active' : '' }}">
+        <i class="bi bi-box-arrow-left me-2"></i> Log out
+    </a>
+</div>
+@endauth

@@ -21,6 +21,24 @@ textarea {
 }
 
 /* Sizing */
+@media (min-width: 1200px) {
+    .w-xl-auto {
+        width: auto !important;
+    }
+    .w-xl-100 {
+        width: 100% !important;
+    }
+    .w-xl-75 {
+        width: 75% !important;
+    }
+    .w-xl-50 {
+        width: 50% !important;
+    }
+    .w-xl-25 {
+        width: 25% !important;
+    }
+}
+
 @media (min-width: 768px) {
     .w-md-auto {
         width: auto !important;

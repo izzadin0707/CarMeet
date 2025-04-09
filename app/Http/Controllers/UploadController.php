@@ -45,7 +45,11 @@ class UploadController extends Controller
         $file = $request->file('file');
         $title = $request->has('title') ? $request->input('title') : "";
         $desc = $request->has('desc') ? $request->input('desc') : "";
-        $category = $request->has('category') ? $request->input('category') : null;
+        $category = $request->has('category') ? $request->input('category') : '1';
+
+        if ($request->has('category')) {
+            $category = Categories::where('slug', $category)->firstOrFail()->id;
+        }
 
         if ($file || $desc) {
             $userId = Auth::id();
