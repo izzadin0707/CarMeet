@@ -32,7 +32,7 @@ class CreationsController extends Controller
             $search = $request->query('search');
             $creation = Creations::with(['users', 'categorys']);
             
-            if ($category) {
+            if ($category && !$request->has('search')) {
                 $categoryModel = Categories::where('slug', $category)->firstOrFail();
                 $page = $category;
                 $creation = $creation->where('category_id', $categoryModel->id);

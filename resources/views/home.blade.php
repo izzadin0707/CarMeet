@@ -93,7 +93,7 @@
                                     $crea = date('d M Y', strtotime($creation->created_at));
                                 }
                             @endphp
-                            <small class="text-muted"> • {{ $crea }}</small>
+                            <small class="text-muted"> • {{ $crea }} {{ $page == 'explore' ? '(' . $creation->categorys->name . ')' : '' }}</small>
                         </div>
                         @php
                             $token = csrf_token();

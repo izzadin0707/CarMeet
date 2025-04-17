@@ -10,6 +10,7 @@
 </head>
 @include('component.modal-post')
 @include('component.modal-delete')
+@include('component.modal-profile')
 <body style="overflow: hidden; height: 100vh;">
   <div class="container-fluid h-100">
       <div class="row vh-100">

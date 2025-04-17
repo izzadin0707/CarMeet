@@ -470,6 +470,13 @@ function openModalPost() {
     }, 100);
 }
 
+// Modal Post Open
+function openModalProfile() {
+    $("#modal-profile").removeClass("d-none").animate({
+        opacity: 1
+    }, 100);
+}
+
 // Modal Delete Open
 function openModalDelete(route, method, data = []) {
     $("#modal-delete").removeClass("d-none").animate({

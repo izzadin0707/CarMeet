@@ -29,7 +29,8 @@ class ProfileController extends Controller
     public function index($tab = null){
         if($this->validateBan()){
             $page = $tab == null ? 'posting' : $tab;
-            $creation = Creations::with(['users', 'categorys'])->where('user_id', Auth::id());
+            $creation = Creations::with(['users', 'categorys']);
+            // $creation = Creations::with(['users', 'categorys'])->where('user_id', Auth::id());
 
             return view('profile', [
                 "page" => $page,
@@ -147,19 +148,27 @@ class ProfileController extends Controller
 
     public function changePassword(Request $request) {
             $request->validate([
-                'old_password' => 'required',
-                'new_password' => 'required',
+                'password' => 'required',
+                'new_password' => 'required|string|min:8|',
+                'password_confirmation' => 'required|string|min:8|same:new_password',
+            ], [
+                'password.required' => 'Password wajib diisi.',
+                'new_password.required' => 'Password baru wajib diisi.',
+                'new_password.min' => 'Password baru minimal 8 karakter.',
+                'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+                'password_confirmation.same' => 'Konfirmasi password tidak cocok.'
             ]);
 
-            if(!Hash::check($request->old_password, auth()->user()->password)){
-                return false;
+            
+            if(!Hash::check($request->password, auth()->user()->password)){
+                return redirect()->back()->with('status', 'Password Wrong!');
             }
 
             Users::whereId(auth()->user()->id)->update([
                 'password' => Hash::make($request->new_password)
             ]);
 
-            return true;
+            return redirect()->back()->with('status', 'success change password!');
     }
 
     public function resetTheme(Request $request) {
