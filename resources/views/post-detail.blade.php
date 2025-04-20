@@ -17,15 +17,16 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
             style="width: 40px; height: 40px; object-fit: cover;">
             <div class="d-flex justify-content-between mb-2 w-100">
                 <div>
-                    <div class="text-nowrap">
-                        <span class="mb-0 fw-semibold">{{ $creation->users->name }}</span>
+                    <div class="d-flex flex-column text-nowrap" style="cursor: pointer;" onclick="window.location.href='{{ route('profile', ['username' => urlencode($creation->users->username)]) }}'">
+                        <span class="mb-0 fw-semibold fs-5" style="margin-top: -5px">{{ $creation->users->name }}</span>
+                        <small class="mb-0 text-muted" style="margin-top: -5px">{{ $creation->users->username }}</small>
                     </div>
                 </div>
                 <div class="dropdown">
@@ -50,7 +51,7 @@
                             </a>
                         </li>
                         @if ($creation->user_id != $user->id)
-                            <li><a class="dropdown-item" href="#">Report</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="openModalReport('creation', {{ $creation->id }})">Report</a></li>
                         @endif
                     </ul>
                 </div>
@@ -135,7 +136,7 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $assets->where('user_id', '-', $comment->user_id)->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $comment->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
@@ -155,7 +156,7 @@
                             $crea = date('d M Y', strtotime($comment->created_at));
                         }
                     @endphp
-                    <div class="text-nowrap">
+                    <div class="text-nowrap" style="cursor: pointer;" onclick="window.location.href='{{ route('profile', ['username' => urlencode($comment->users->username)]) }}'">
                         <span class="mb-0 fw-semibold">{{ $comment->users->name }}</span>
                         <small class="text-muted"> • {{ $crea }}</small>
                     </div>
@@ -181,7 +182,7 @@
                             </li>
                         @endif
                         @if ($comment->user_id != $user->id)
-                            <li><a class="dropdown-item" href="#">Report</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="openModalReport('comment', {{ $comment->id }})">Report</a></li>
                         @endif
                     </ul>
                 </div>

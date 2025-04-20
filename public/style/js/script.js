@@ -470,11 +470,36 @@ function openModalPost() {
     }, 100);
 }
 
-// Modal Post Open
+// Modal Profile Open
 function openModalProfile() {
     $("#modal-profile").removeClass("d-none").animate({
         opacity: 1
     }, 100);
+}
+
+// Modal Report Open
+function openModalReport(type, id) {
+    $("#modal-report").removeClass("d-none").animate({
+        opacity: 1
+    }, 100);
+    $('#modal-report').find('input[name="type"]').val(type);
+    $('#modal-report').find('input[name="id"]').val(id);
+}
+
+// Modal Banned Open
+function openModalBanned(id) {
+    $("#modal-banned").removeClass("d-none").animate({
+        opacity: 1
+    }, 100);
+    $('#modal-banned').find('input[name="user_id"]').val(id);
+}
+
+// Modal Unbanned Open
+function openModalUnban(id) {
+    $("#modal-unban").removeClass("d-none").animate({
+        opacity: 1
+    }, 100);
+    $('#modal-unban').find('input[name="user_id"]').val(id);
 }
 
 // Modal Delete Open

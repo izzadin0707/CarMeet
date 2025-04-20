@@ -9,8 +9,8 @@
                 class="rounded-circle me-3" 
                 style="width: 50px; height: 50px; object-fit: cover;">
             <div>
-                <h6 class="mb-0">{{ $user->name }}</h6>
-                <small class="text-muted">{{ $user->username }}</small>
+                <h6 class="mb-0">{{ Auth::user()->name }}</h6>
+                <small class="text-muted">{{ Auth::user()->username }}</small>
             </div>
         </div>
     </div>
@@ -40,8 +40,11 @@
     </a>
     @auth
     @if (Auth::user()->roles == 1)
-    <a href="#" class="list-group-item list-group-item-action {{ isset($page) && $page == 'report' ? 'active' : '' }}">
-        <i class="bi bi-megaphone me-2"></i> Report
+    <a href="{{ route('report') }}" class="list-group-item list-group-item-action {{ isset($page) && $page == 'report' ? 'active' : '' }}">
+        <i class="bi bi-megaphone me-2"></i> Report 
+        @if ($reportAll > 0)
+        <span class="ms-1">({{ $reportAll }})</span>
+        @endif
     </a>
     @endif
     @endauth

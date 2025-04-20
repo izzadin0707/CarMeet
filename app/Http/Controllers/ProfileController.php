@@ -8,6 +8,7 @@ use App\Models\Comments;
 use App\Models\Creations;
 use App\Models\Event;
 use App\Models\Likes;
+use App\Models\Report;
 use App\Models\Saves;
 use App\Models\Users;
 use Illuminate\Support\Str;
@@ -18,32 +19,49 @@ use Illuminate\Support\Facades\Hash;
 class ProfileController extends Controller
 {
     public function validateBan(){
-        if(Banned::where('user_id', Auth::id())->first() == null){
-            return true;
-        }else{
+        $existingBan = Banned::where('user_id', Auth::id())->first();
+        if($existingBan){
             Auth::logout();
-            return redirect('/')->withErrors(['email' => 'You Account Status Is Banned!']);
+            session()->invalidate();
+            session()->regenerateToken();
+            return redirect()->route('login')->withErrors(['email' => 'Your Account Status Is Banned!']);
         }
+        return true;
     }
     
-    public function index($tab = null){
+    public function index($username = null, $tab = null){
         if($this->validateBan()){
-            $page = $tab == null ? 'posting' : $tab;
-            $creation = Creations::with(['users', 'categorys']);
-            // $creation = Creations::with(['users', 'categorys'])->where('user_id', Auth::id());
+            if ($username === null) {
+                return redirect()->route('profile', ['username' => urlencode(Auth::user()->username), 'tab' => $tab]);
+            }
 
+            $page = $tab == null ? 'posting' : $tab;
+            
+            // Use authenticated user if username is null
+            $profileUser = $username 
+                ? Users::where('username', $username)->firstOrFail()
+                : Auth::user();
+            
+            // Get creations for specific user
+            $creation = Creations::with(['users', 'categorys'])
+                ->where('user_id', $profileUser->id);
+    
             return view('profile', [
                 "page" => $page,
                 "auth_assets" => Assets::where('user_id', Auth::id())->get(),
                 "assets" => Assets::all(),
-                "user" => Auth::user(),
+                "user" => $profileUser,
+                "user_assets" => Assets::where('user_id', $profileUser->id)->get(),
                 "eventsAll" => Event::all(),
+                "reportAll" => Report::where('read', 0)->count(),
                 "creations" => $creation->latest()->get(),
                 "likes" => Likes::all(),
                 "saves" => Saves::all(),
                 "comments" => Comments::with('creations.categorys')->latest()->get(),
+                "banned" => Banned::where('user_id', $profileUser->id)->first(),
             ]);
         }
+        return redirect('/')->withErrors(['email' => 'You Account Status Is Banned!']);
     }
 
     public function profile($username){
@@ -75,108 +93,91 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function photoProfile(Request $request) {
-        if($request->hasFile('photo-profile')){
+    public function profileUpdate(Request $request) {
+        $user = Auth::user();
+        $updated = false;
+    
+        // Validate email and username
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'username' => 'required|string|max:255'
+        ], [
+            'email.required' => 'Email is required',
+            'email.email' => 'Please enter a valid email address',
+            'email.unique' => 'Email already exists',
+            'username.required' => 'Username is required',
+            'username.max' => 'Username cannot exceed 255 characters'
+        ]);
+    
+        // Handle photo profile upload
+        if ($request->hasFile('photo-profile')) {
             $file = $request->file('photo-profile');
             $mimeType = $file->getMimeType();
-            $photoProfile = date('Ymd') . '0' . Auth::id();
-
+            $photoProfile = date('Ymd') . '0' . $user->id;
+    
             if (Str::startsWith($mimeType, 'image')) {
                 $photoProfileEdit = Users::photoProfile($photoProfile);
                 $file->move(public_path('storage/assets'), $photoProfileEdit.'.png');
-                return $photoProfileEdit;
+                $updated = true;
             }
-            return false;
-                
         }
-        return false;
-    }
-
-    public function banner(Request $request) {
-        if($request->hasFile('banner-file-input')){
-            $file = $request->file('banner-file-input');
+    
+        // Handle banner upload
+        if ($request->hasFile('banner')) {
+            $file = $request->file('banner');
             $mimeType = $file->getMimeType();
-            $banner = date('Ymd') . '0' . Auth::id();
-
+            $banner = date('Ymd') . '0' . $user->id;
+    
             if (Str::startsWith($mimeType, 'image')) {
                 $bannerEdit = Users::banner($banner);
                 $file->move(public_path('storage/assets'), $bannerEdit.'.png');
-                return $bannerEdit;
+                $updated = true;
             }
-            return false;
-                
         }
-        return false;
-    }
-
-    public function changeName(Request $request) {
-        if($request->input('name')){
-            $name = $request->input('name');
-            $id = Auth::id();
-            $username = $name . "#" . str_pad($id, 4, '0', STR_PAD_LEFT);
+    
+        // Handle name and email update
+        if ($request->filled('username') || $request->filled('email')) {
+            $name = $request->input('username');
+            $email = $request->input('email');
+            $username = str_replace(' ', '_', $name) . "#" . str_pad($user->id, 4, '0', STR_PAD_LEFT);
             
-            Users::where('id', $id)->update(['name' => $name, 'username' => $username]);
-
-            return true;
+            Users::where('id', $user->id)->update([
+                'name' => $name, 
+                'username' => $username,
+                'email' => $email
+            ]);
+            $updated = true;
         }
-        return false;
-    }
-
-    public function backgroundColor(Request $request) {
-        if($request->input('color')){
-            $color = $request->input('color');
-            $id = Auth::id();
-            
-            Users::where('id', $id)->update(['color' => $color]);
-
-            return true;
+    
+        if ($updated) {
+            return redirect()->route('profile')->with('status', 'Profile updated successfully!');
         }
-        return false;
-    }
-
-    public function fontColor(Request $request) {
-        if($request->input('color')){
-            $color = $request->input('color');
-            $id = Auth::id();
-            
-            Users::where('id', $id)->update(['font' => $color]);
-
-            return true;
-        }
-        return false;
+    
+        return redirect()->back()->with('error', 'No changes were made.');
     }
 
     public function changePassword(Request $request) {
-            $request->validate([
-                'password' => 'required',
-                'new_password' => 'required|string|min:8|',
-                'password_confirmation' => 'required|string|min:8|same:new_password',
-            ], [
-                'password.required' => 'Password wajib diisi.',
-                'new_password.required' => 'Password baru wajib diisi.',
-                'new_password.min' => 'Password baru minimal 8 karakter.',
-                'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
-                'password_confirmation.same' => 'Konfirmasi password tidak cocok.'
-            ]);
+        $request->validate([
+            'password' => 'required',
+            'new_password' => 'required|string|min:8|',
+            'password_confirmation' => 'required|string|min:8|same:new_password',
+        ], [
+            'password.required' => 'Password wajib diisi.',
+            'new_password.required' => 'Password baru wajib diisi.',
+            'new_password.min' => 'Password baru minimal 8 karakter.',
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+            'password_confirmation.same' => 'Konfirmasi password tidak cocok.'
+        ]);
 
-            
-            if(!Hash::check($request->password, auth()->user()->password)){
-                return redirect()->back()->with('status', 'Password Wrong!');
-            }
-
-            Users::whereId(auth()->user()->id)->update([
-                'password' => Hash::make($request->new_password)
-            ]);
-
-            return redirect()->back()->with('status', 'success change password!');
-    }
-
-    public function resetTheme(Request $request) {
-        $id = Auth::id();
-        if(Users::where('id', $id)->update(['color' => null, 'font' => null])){
-            return true;
-        }else{
-            return false;
+        
+        if(!Hash::check($request->password, auth()->user()->password)){
+            return redirect()->back()->with('status', 'Password Wrong!');
         }
+
+        Users::whereId(auth()->user()->id)->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return redirect()->back()->with('status', 'success change password!');
     }
 }

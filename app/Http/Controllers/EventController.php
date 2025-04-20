@@ -22,6 +22,7 @@ class EventController extends Controller
             "assets" => Assets::all(),
             "user" => Auth::user(),
             "eventsAll" => Event::latest()->get()->take(6),
+            "reportAll" => Report::where('read', 0)->count(),
             "events" => Event::with('user')->where('title', 'LIKE', '%'.$search.'%')->latest()->get(),
             "likes" => Likes::all(),
             "saves" => Saves::all(),
@@ -37,6 +38,7 @@ class EventController extends Controller
                 "assets" => Assets::all(),
                 "user" => Auth::user(),
                 "eventsAll" => Event::all(),
+                "reportAll" => Report::where('read', 0)->count(),
                 "event" => Event::with('user')->where('id', $id)->first(),
             ]);
         } else {
@@ -53,6 +55,7 @@ class EventController extends Controller
                     "assets" => Assets::all(),
                     "user" => Auth::user(),
                     "eventsAll" => Event::all(),
+                "reportAll" => Report::where('read', 0)->count(),
                     "event" => $event,
                     'auth_assets' => Assets::where('user_id', Auth::guard('admin')->id())->get(),
                 ]);
@@ -65,6 +68,7 @@ class EventController extends Controller
                 "assets" => Assets::all(),
                 "user" => Auth::user(),
                 "eventsAll" => Event::all(),
+                "reportAll" => Report::where('read', 0)->count(),
                 'auth_assets' => Assets::where('user_id', Auth::guard('admin')->id())->get(),
             ]);
         }

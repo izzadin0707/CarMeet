@@ -6,7 +6,7 @@
                 <i class="bi bi-x fs-3 text-muted modal-close" style="cursor: pointer;"></i>
             </div>
             <div class="card-body">
-                <form id="postForm" action="{{ route('upload') }}" method="POST" enctype="multipart/form-data">
+                <form id="postFormModal" action="{{ route('upload') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="d-flex mb-3">
                         <img src="{{ 

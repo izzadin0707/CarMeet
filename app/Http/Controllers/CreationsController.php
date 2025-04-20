@@ -11,6 +11,7 @@ use App\Models\Likes;
 use App\Models\Saves;
 use App\Models\Users;
 use App\Models\Event;
+use App\Models\Report;
 use Egulias\EmailValidator\Parser\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,12 +19,14 @@ use Illuminate\Support\Facades\Auth;
 class CreationsController extends Controller
 {
     public function validateBan(){
-        if(Banned::where('user_id', Auth::id())->first() == null){
-            return true;
-        }else{
+        $existingBan = Banned::where('user_id', Auth::id())->first();
+        if($existingBan){
             Auth::logout();
-            return redirect('/')->withErrors(['email' => 'You Account Status Is Banned!']);
+            session()->invalidate();
+            session()->regenerateToken();
+            return redirect()->route('login')->withErrors(['email' => 'Your Account Status Is Banned!']);
         }
+        return true;
     }
 
     public function index(Request $request, $category = 'general') {
@@ -53,6 +56,7 @@ class CreationsController extends Controller
                 "assets" => Assets::all(),
                 "user" => Auth::user(),
                 "eventsAll" => Event::all(),
+                "reportAll" => Report::where('read', 0)->count(),
                 "creations" => $creation->latest()->get(),
                 "likes" => Likes::all(),
                 "saves" => Saves::all(),
@@ -74,6 +78,7 @@ class CreationsController extends Controller
                     "assets" => Assets::all(),
                     "user" => Auth::user(),
                     "eventsAll" => Event::all(),
+                "reportAll" => Report::where('read', 0)->count(),
                     "creation" => $creation->where('id', $id)->first(),
                     "comments" => Comments::with(['users'])->where('creation_id', $id)->latest()->get(),
                     "likes" => Likes::all(),

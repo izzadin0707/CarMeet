@@ -1,26 +1,38 @@
 @extends('layouts.main')
 
 @section('content')
-{{-- Posting Cepat --}}
 <div class="card mb-3 shadow-sm border-0">
     <img src="{{ 
-        $auth_assets->where('status', 'photo-profile')->first()
-            ? URL::asset('storage/assets/' . $auth_assets->where('status', 'banner')->first()->asset . '.png') 
+        $user_assets->where('status', 'photo-profile')->first()
+            ? URL::asset('storage/assets/' . $user_assets->where('status', 'banner')->first()->asset . '.png') 
             : URL::asset('photo-profile.png') }}" 
         class="w-100 rounded-top-3" 
         style="height: 12rem; object-fit: cover;">
     <div class="card-body">
         <div class="d-flex mb-3">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
-                    ? URL::asset('storage/assets/' . $auth_assets->where('status', 'photo-profile')->first()->asset . '.png') 
+                $user_assets->where('status', 'photo-profile')->first()
+                    ? URL::asset('storage/assets/' . $user_assets->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
                 class="rounded-circle me-3 border border-5 border-white" 
                 style="width: 9rem; height: 9rem; object-fit: cover; margin-top: -5.5rem; ">
             <div class="d-flex justify-content-end w-100">
+                @if ($user->id == Auth::user()->id)
                 <div>
-                    <button class="btn btn-outline-secondary" onclick="openModalProfile()">Profile Setting</button>
+                    <button class="btn btn-outline-secondary" id="profile-setting-btn" onclick="openModalProfile()">Profile Setting</button>
                 </div>
+                @else
+                <div>
+                    @if (Auth::user()->roles == 1)
+                    <button class="btn btn-outline-danger me-2" onclick="{{ isset($banned) ? 'openModalUnban('. $user->id .')' : 'openModalBanned('. $user->id .')' }}">
+                        <i class="bi bi-dash-circle fs-6 me-1"></i> {{ isset($banned) ? 'Unban User' : 'Ban User' }}
+                    </button>
+                    @endif
+                    <button class="btn btn-outline-secondary" onclick="openModalReport('profile', {{ $user->id }})">
+                        <i class="bi bi-megaphone-fill fs-6"></i>
+                    </button>
+                </div>
+                @endif
             </div>
         </div>
         <div>
@@ -37,19 +49,19 @@
 <div class="card mb-3 shadow-sm border-0">
     <div class="card-body">
         <div class="d-flex justify-content-between gap-3">
-            <a href="{{ route('profile', 'posting') }}" class="btn {{ isset($page) && $page == 'posting' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+            <a href="{{ route('profile', ['username' => urlencode($user->username), 'tab' => 'posting']) }}" class="btn {{ isset($page) && $page == 'posting' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
                 <span>Posting</span>
             </a>
-            <a href="{{ route('profile', 'reply') }}" class="btn {{ isset($page) && $page == 'reply' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+            <a href="{{ route('profile', ['username' => urlencode($user->username), 'tab' => 'reply']) }}" class="btn {{ isset($page) && $page == 'reply' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
                 <span>Reply</span>
             </a>
-            <a href="{{ route('profile', 'media') }}" class="btn {{ isset($page) && $page == 'media' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+            <a href="{{ route('profile', ['username' => urlencode($user->username), 'tab' => 'media']) }}" class="btn {{ isset($page) && $page == 'media' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
                 <span>Media</span>
             </a>
-            <a href="{{ route('profile', 'like') }}" class="btn {{ isset($page) && $page == 'like' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+            <a href="{{ route('profile', ['username' => urlencode($user->username), 'tab' => 'like']) }}" class="btn {{ isset($page) && $page == 'like' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
                 <span>Like</span>
             </a>
-            <a href="{{ route('profile', 'save') }}" class="btn {{ isset($page) && $page == 'save' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
+            <a href="{{ route('profile', ['username' => urlencode($user->username), 'tab' => 'save']) }}" class="btn {{ isset($page) && $page == 'save' ? 'btn-primary' : 'btn-outline-primary' }} rounded-pill w-100">
                 <span>Save</span>
             </a>
         </div>
@@ -69,7 +81,7 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $user_assets->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
@@ -78,7 +90,7 @@
                 <div class="d-flex justify-content-between mb-2" style="cursor: pointer;">
                     <div class="w-100" onclick="window.location.href='{{ route('post-detail', ['category' => $creation->categorys->slug, 'id' => $creation->id]) }}'">
                         <div class="text-nowrap">
-                            <a href="#" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
+                            <a href="{{ route('profile', ['username' => urlencode($creation->users->username)]) }}" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
                             @php
                                 $crea = date('Y', strtotime($creation->created_at));
                                 if (date('Y') == $crea) {
@@ -178,7 +190,7 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $user_assets->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $comment->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
@@ -198,7 +210,7 @@
                             $crea = date('d M Y', strtotime($comment->created_at));
                         }
                     @endphp
-                    <div class="text-nowrap">
+                    <div class="text-nowrap" style="cursor: pointer;" onclick="window.location.href='{{ route('profile', ['username' => urlencode($comment->users->username)]) }}'">
                         <span class="mb-0 fw-semibold">{{ $comment->users->name }}</span>
                         <small class="text-muted"> • {{ $crea }}</small>
                     </div>
@@ -277,7 +289,7 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $user_assets->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
@@ -286,7 +298,7 @@
                 <div class="d-flex justify-content-between mb-2" style="cursor: pointer;">
                     <div class="w-100" onclick="window.location.href='{{ route('post-detail', ['category' => $creation->categorys->slug, 'id' => $creation->id]) }}'">
                         <div class="text-nowrap">
-                            <a href="#" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
+                            <a href="{{ route('profile', ['username' => urlencode($creation->users->username)]) }}" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
                             @php
                                 $crea = date('Y', strtotime($creation->created_at));
                                 if (date('Y') == $crea) {
@@ -385,7 +397,7 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $user_assets->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
@@ -394,7 +406,7 @@
                 <div class="d-flex justify-content-between mb-2" style="cursor: pointer;">
                     <div class="w-100" onclick="window.location.href='{{ route('post-detail', ['category' => $creation->categorys->slug, 'id' => $creation->id]) }}'">
                         <div class="text-nowrap">
-                            <a href="#" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
+                            <a href="{{ route('profile', ['username' => urlencode($creation->users->username)]) }}" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
                             @php
                                 $crea = date('Y', strtotime($creation->created_at));
                                 if (date('Y') == $crea) {

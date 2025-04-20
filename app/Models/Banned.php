@@ -11,6 +11,11 @@ class Banned extends Model
 
     protected $guarded = ['id'];
 
+    protected $fillable = [
+        'user_id',
+        'banned'
+    ];
+
     public function user() {
         return $this->belongsTo('App\Models\Users', 'user_id');
     }

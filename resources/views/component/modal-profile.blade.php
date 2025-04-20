@@ -6,34 +6,46 @@
                 <i class="bi bi-x fs-3 text-muted modal-close" style="cursor: pointer;"></i>
             </div>
             <div class="card-body p-0">
-                <form id="postForm" action="#" method="POST" enctype="multipart/form-data">
+                <form id="profileUpdate" action="{{ route('profile-update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    <input type="file" name="photo-profile" id="photo-profile" accept="image/*" style="display:none;" />
+                    <input type="file" name="banner" id="banner" accept="image/*" style="display:none;" />
                     <img src="{{ 
-                        $auth_assets->where('status', 'photo-profile')->first()
+                        $auth_assets->where('status', 'banner')->first()
                             ? URL::asset('storage/assets/' . $auth_assets->where('status', 'banner')->first()->asset . '.png') 
                             : URL::asset('photo-profile.png') }}" 
+                        data-old="{{ 
+                            $auth_assets->where('status', 'banner')->first()
+                                ? URL::asset('storage/assets/' . $auth_assets->where('status', 'banner')->first()->asset . '.png') 
+                                : URL::asset('photo-profile.png') }}" 
                         class="w-100" 
-                        style="height: 12rem; object-fit: cover;">
+                        style="height: 12rem; object-fit: cover;"
+                        id="BannerPreview">
                     <div class="p-3">
                         <div class="d-flex mb-3">
                             <img src="{{ 
                                 $auth_assets->where('status', 'photo-profile')->first()
                                     ? URL::asset('storage/assets/' . $auth_assets->where('status', 'photo-profile')->first()->asset . '.png') 
-                                    : URL::asset('photo-profile.png') }}" 
+                                    : URL::asset('photo-profile.png') }}"
+                                data-old="{{ 
+                                    $auth_assets->where('status', 'photo-profile')->first()
+                                        ? URL::asset('storage/assets/' . $auth_assets->where('status', 'photo-profile')->first()->asset . '.png') 
+                                        : URL::asset('photo-profile.png') }}" 
                                 class="rounded-circle me-3 border border-5 border-white" 
-                                style="width: 9rem; height: 9rem; object-fit: cover; margin-top: -5.5rem; ">
+                                style="width: 9rem; height: 9rem; object-fit: cover; margin-top: -5.5rem; "
+                                id="ProfilePreview">
                         </div>
                         <div>
                             <div class="mb-3">
                                 <label for="username">Username</label>
-                                <input type="text" name="username" id="username" class="form-control" value="{{ $user->name }}" required>
+                                <input type="text" name="username" id="username" class="form-control" value="{{ $user->name }}" data-old="{{ $user->name }}" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email">Email</label>
-                                <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" required>
+                                <input type="email" name="email" id="email" class="form-control" value="{{ $user->email }}" data-old="{{ $user->email }}" required>
                             </div>
                             <div class="d-flex justify-content-end">
-                                <button type="button" class="btn btn-primary px-3" onclick="$('#postForm').submit()">Save</button>
+                                <button type="button" class="btn btn-primary px-3" onclick="$('#profileUpdate').submit()">Save</button>
                             </div>
                         </div>
                     </div>
@@ -72,51 +84,79 @@
     <br>
 </div>
 
+<style>
+    #ProfilePreview {
+        z-index: 100;
+    }
+    
+    #ProfilePreview, #BannerPreview {
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+    #ProfilePreview:hover, #BannerPreview:hover {
+        filter: brightness(0.8);
+    }
+</style>
+
 <script>
     $(document).ready(function() {
-        // Media button click handler
-        $('#mediaButtonModal').on('click', function() {
-            $('#mediaFileInputModal').click();
+        $('.modal-close').on('click', function() {
+            $('#username').val($('#username').data('old'));
+            $('#email').val($('#email').data('old'));
+            $('#password').val('');
+            $('#new_password').val('');
+            $('#password_confirmation').val('');
+            $('#photo-profile').val('');
+            $('#banner').val('');
+            $('#ProfilePreview').attr('src', $('#ProfilePreview').data('old'));
+            $('#BannerPreview').attr('src', $('#BannerPreview').data('old'));
+        });
+
+        $('#profile-setting-btn').on('click', function() {
+            $('#username').val($('#username').data('old'));
+            $('#email').val($('#email').data('old'));
+            $('#password').val('');
+            $('#new_password').val('');
+            $('#password_confirmation').val('');
+            $('#photo-profile').val('');
+            $('#banner').val('');
+            $('#ProfilePreview').attr('src', $('#ProfilePreview').data('old'));
+            $('#BannerPreview').attr('src', $('#BannerPreview').data('old'));
+        });
+
+        $('#ProfilePreview').on('click', function() {
+            $('#photo-profile').click();
+        });
+
+        $('#BannerPreview').on('click', function() {
+            $('#banner').click();
         });
     
-        // File input change handler
-        $('#mediaFileInputModal').on('change', function() {
-            // Reset previous preview
-            $('#imagePreviewModal, #videoPreviewModal').hide();
-            $('#previewContainerModal').hide();
-    
+        $('#photo-profile').on('change', function() {
             var file = this.files[0];
             if (file) {
-                var fileName = file.name;
-                $('#fileNameDisplayModal').text(fileName);
-    
-                // Show preview based on file type
                 if (file.type.startsWith('image/')) {
                     var reader = new FileReader();
                     reader.onload = function(e) {
-                        $('#imagePreviewModal').attr('src', e.target.result).show();
-                        $('#videoPreviewModal').hide();
-                        $('#previewContainerModal').show();
+                        $('#ProfilePreview').attr('src', e.target.result);
                     }
                     reader.readAsDataURL(file);
-                } else if (file.type.startsWith('video/')) {
-                    var videoURL = URL.createObjectURL(file);
-                    $('#videoPreviewModal').attr('src', videoURL).show();
-                    $('#imagePreviewModal').hide();
-                    $('#previewContainerModal').show();
                 }
             }
         });
-    
-        // Remove preview handler
-        $('#removePreviewModal').on('click', function() {
-            // Clear file input
-            $('#mediaFileInputModal').val('');
-            
-            // Hide preview
-            $('#previewContainerModal').hide();
-            $('#imagePreviewModal, #videoPreviewModal').hide();
-            $('#fileNameDisplayModal').text('');
+
+        $('#banner').on('change', function() {
+            var file = this.files[0];
+            if (file) {
+                if (file.type.startsWith('image/')) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#BannerPreview').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
         });
     });
 </script>

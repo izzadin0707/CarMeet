@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     public static function index(){
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+        
         return view('auth.index', [
             'categories' => Categories::all(),
             'showRegister' => false // Tambahkan variabel untuk mengontrol tampilan form

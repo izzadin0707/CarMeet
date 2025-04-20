@@ -8,7 +8,7 @@
             <div class="card-body">
                 <form action="" method="">
                     @csrf
-                    <h5>Delete post?</h5>
+                    {{-- <h5>Delete?</h5> --}}
                     <p>This action cannot be undone and will be permanently removed.</p>
                     <div class="d-flex gap-3 mt-4">
                         <button type="button" class="btn btn-outline-secondary w-100 modal-close">Cancel</button>

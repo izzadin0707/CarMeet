@@ -70,7 +70,7 @@
     <div class="card-body">
         <div class="d-flex">
             <img src="{{ 
-                $auth_assets->where('status', 'photo-profile')->first()
+                $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()
                     ? URL::asset('storage/assets/' . $assets->where('user_id', '-', $creation->user_id)->where('status', 'photo-profile')->first()->asset . '.png') 
                     : URL::asset('photo-profile.png') }}" 
             class="rounded-circle me-3" 
@@ -79,7 +79,7 @@
                 <div class="d-flex justify-content-between mb-2" style="cursor: pointer;">
                     <div class="w-100" onclick="window.location.href='{{ route('post-detail', ['category' => $page, 'id' => $creation->id]) }}'">
                         <div class="text-nowrap">
-                            <a href="#" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
+                            <a href="{{ route('profile', ['username' => urlencode($creation->users->username)]) }}" class="mb-0 fw-semibold text-decoration-none">{{ $creation->users->name }}</a>
                             @php
                                 $crea = date('Y', strtotime($creation->created_at));
                                 if (date('Y') == $crea) {
@@ -126,7 +126,7 @@
                                 </a>
                             </li>
                             @if ($creation->user_id != $user->id)
-                                <li><a class="dropdown-item" href="#">Report</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="openModalReport('creation', {{ $creation->id }})">Report</a></li>
                             @endif
                         </ul>
                     </div>

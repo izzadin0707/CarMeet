@@ -12,6 +12,18 @@ class Report extends Model
     protected $guarded = ['id'];
 
     public function user() {
-        return $this->belongsTo('App\Models\Users', 'user_id');
+        return $this->belongsTo(Users::class, 'user_id');
+    }
+
+    public function creation() {
+        return $this->belongsTo(Creations::class, 'creation_id');
+    }
+
+    public function comment() {
+        return $this->belongsTo(Comments::class, 'comment_id');
+    }
+
+    public function profile() {
+        return $this->belongsTo(Users::class, 'profile_id');
     }
 }
