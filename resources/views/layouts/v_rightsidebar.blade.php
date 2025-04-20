@@ -11,15 +11,21 @@
         <span>Event Terbaru</span>
         <a href="{{ route('event') }}" class="text-primary text-decoration-none" style="font-size: .85rem">See More</a>
     </div>
-    <ul class="list-group list-group-flush">
-        @foreach ($eventsAll as $event)
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <h6 class="mb-1">{{ $event->title }}</h6>
-                <small class="text-muted">{{date('d F Y', strtotime($event->start_date))}}</small>
-            </div>
-            <a href="{{ route('event-detail', ['id' => $event->id]) }}" class="btn btn-sm btn-outline-secondary">See</a>
-        </li>
-        @endforeach
-    </ul>
+    @if($eventsAll->isEmpty())
+        <div class="card-body text-center text-muted">
+            <p class="mb-0">No events available</p>
+        </div>
+    @else
+        <ul class="list-group list-group-flush">
+            @foreach ($eventsAll as $event)
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">{{ $event->title }}</h6>
+                    <small class="text-muted">{{date('d F Y', strtotime($event->start_date))}}</small>
+                </div>
+                <a href="{{ route('event-detail', ['id' => $event->id]) }}" class="btn btn-sm btn-outline-secondary">See</a>
+            </li>
+            @endforeach
+        </ul>
+    @endif
 </div>

@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use App\Models\Categories;
 use App\Models\Roles;
+use App\Models\Users;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,6 +18,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // User 
+        Users::create([
+            'name' => 'Admin',
+            'username' => 'Admin#0000',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('admin#1234'),
+            'roles' => 1
+        ]);
+
         // Categories
         Categories::create([
             'name' => 'General',
@@ -25,21 +35,20 @@ class DatabaseSeeder extends Seeder
         
         Categories::create([
             'name' => 'Mods & Tech',
-            'slug' => 'mods_tech'
+            'slug' => 'modstech'
         ]);
         
         Categories::create([
             'name' => 'Car Showcase',
-            'slug' => 'car_showcase'
+            'slug' => 'carshowcase'
         ]);
 
         Categories::create([
             'name' => 'Help & Tips',
-            'slug' => 'help_tips'
+            'slug' => 'helptips'
         ]);
 
         // Roles
-        
         Roles::create([
             'role' => 'admin'
         ]);
